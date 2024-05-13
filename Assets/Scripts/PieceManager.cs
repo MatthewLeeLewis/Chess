@@ -14,6 +14,9 @@ public class PieceManager : MonoBehaviour
     private List<Piece> darkPieceList;
     private List<Piece> capturedDarkList;
 
+    [SerializeField] Piece lightKing;
+    [SerializeField] Piece darkKing;
+
     private void Awake()
     {
         if (Instance != null) // This if check ensures that multiple instances of this object do not exist and reports it if they do, and destroys the duplicate.
@@ -91,5 +94,15 @@ public class PieceManager : MonoBehaviour
     public Piece GetFocusedPiece()
     {
         return focusedPiece;
+    }
+
+    public Piece GetLightKing()
+    {
+        return lightKing;
+    }
+
+    public Piece GetDarkKing()
+    {
+        return darkKing;
     }
 }

@@ -82,4 +82,9 @@ public class BishopAction : PieceAction // By making the base class abstract, in
         
         return validGridPositionList;
     }
+
+    public override bool IsValidKingPosition(GridPosition gridPosition)
+    {
+        return (!GetValidActionGridPositionList().Contains(gridPosition));
+    }
 }

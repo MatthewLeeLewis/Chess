@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: isDark
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6098285519977856372, guid: 04d9438846b74bd4e8f15be5d5cbcbc8, type: 3}
+      propertyPath: testBox
+      value: 
+      objectReference: {fileID: 694803291015539352, guid: 5c5059b24b89a6f43a2f75d90d9af4a9, type: 3}
     - target: {fileID: 6261419004498989928, guid: 04d9438846b74bd4e8f15be5d5cbcbc8, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

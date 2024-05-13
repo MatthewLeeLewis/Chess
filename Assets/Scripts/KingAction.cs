@@ -56,10 +56,11 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                 }
 
                 bool valid = true;
-                //List<Piece> enemyPieceList;
+                List<Piece> enemyPieceList;
                 if (piece.IsDark())
                 {
-                    //enemyPieceList = PieceManager.Instance.GetLightPieceList();
+                    enemyPieceList = PieceManager.Instance.GetLightPieceList();
+                    /*
                     foreach (Piece enemy in PieceManager.Instance.GetLightPieceList())
                     {
                         foreach (GridPosition pos in enemy.GetPieceAction().GetValidActionGridPositionList())
@@ -70,11 +71,12 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                                 continue;
                             }
                         }
-                    }
+                    }*/
                 }
                 else
                 {
-                    //enemyPieceList = PieceManager.Instance.GetDarkPieceList();
+                    enemyPieceList = PieceManager.Instance.GetDarkPieceList();
+                    /*
                     foreach (Piece enemy in PieceManager.Instance.GetDarkPieceList())
                     {
                         foreach (GridPosition pos in enemy.GetPieceAction().GetValidActionGridPositionList())
@@ -85,30 +87,36 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                                 continue;
                             }
                         }
-                    }
+                    }*/
                 }
                 
                 
-                /*
+                
                 foreach (Piece enemy in enemyPieceList)
                 {
-                    if (enemy.GetPieceAction().GetValidActionGridPositionList().Contains(testGridPosition))
+                    
+                    if (!enemy.GetPieceAction().IsValidKingPosition(testGridPosition))
                     {
                         valid = false;
                         continue;
                     }
                 }
-                */
-
+                
                 if (!valid)
                 {
                     continue;
                 }
+
 
                 validGridPositionList.Add(testGridPosition);
             }
         }
         
         return validGridPositionList;
+    }
+
+    public override bool IsValidKingPosition(GridPosition gridPosition)
+    {
+        return (!GetValidActionGridPositionList().Contains(gridPosition));
     }
 }

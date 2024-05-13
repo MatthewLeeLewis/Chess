@@ -85,4 +85,9 @@ public class QueenAction : PieceAction // By making the base class abstract, ins
         
         return validGridPositionList;
     }
+
+    public override bool IsValidKingPosition(GridPosition gridPosition)
+    {
+        return (!GetValidActionGridPositionList().Contains(gridPosition));
+    }
 }

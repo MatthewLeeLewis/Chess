@@ -12,6 +12,8 @@ public class Piece : MonoBehaviour
     public static event EventHandler OnAnyPieceDead;
     public static event EventHandler OnAnyPieceSpawned;
     [SerializeField] private bool isDark;
+    [SerializeField] private Transform testBox;
+    [SerializeField] private BoxCollider boxCollider;
 
     private GridPosition gridPosition; // Keeps track of the piece's grid position.
     private PieceAction pieceAction; // Variable for the piece's action.
@@ -64,5 +66,20 @@ public class Piece : MonoBehaviour
     {
         Destroy(this.gameObject);
         OnAnyPieceDead?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void DeactivateCollider()
+    {
+        boxCollider.enabled = false;
+    }
+
+    public void EnableCollider()
+    {
+        boxCollider.enabled = true;
+    }
+
+    public Transform GetBox()
+    {
+        return testBox;
     }
 }

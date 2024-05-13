@@ -36,6 +36,8 @@ public abstract class PieceAction : MonoBehaviour // By making the base class ab
 
     public abstract List<GridPosition> GetValidActionGridPositionList();
 
+    public abstract bool IsValidKingPosition(GridPosition gridPosition);
+
     protected void ActionStart(Action onActionComplete) 
     {
         isActive = true;
