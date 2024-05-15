@@ -101,7 +101,7 @@ public class Piece : MonoBehaviour
         return pieceType.ToString();
     }
 
-    public bool IsThreatened()
+    public bool IsThreatened(GridPosition testGridPosition)
     {
         Vector3 pieceWorldPosition = GetWorldPosition();
 
@@ -129,7 +129,10 @@ public class Piece : MonoBehaviour
                         {
                             if (piece.IsDark() && isDark == false)
                             {
-                                return true;
+                                if (piece.GetGridPosition() != testGridPosition)
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -137,14 +140,20 @@ public class Piece : MonoBehaviour
                     {
                         if (piece.IsDark() != isDark)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                     else if (piece.GetPieceType() == "King")
                     {
                         if (piece.GetGridPosition() == nwPos_grid)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -175,7 +184,10 @@ public class Piece : MonoBehaviour
                         {
                             if (piece.IsDark() && isDark == false)
                             {
-                                return true;
+                                if (piece.GetGridPosition() != testGridPosition)
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -183,14 +195,20 @@ public class Piece : MonoBehaviour
                     {
                         if (piece.IsDark() != isDark)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                     else if (piece.GetPieceType() == "King")
                     {
                         if (piece.GetGridPosition() == nePos_grid)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -221,7 +239,10 @@ public class Piece : MonoBehaviour
                         {
                             if (!piece.IsDark() && isDark == true)
                             {
-                                return true;
+                                if (piece.GetGridPosition() != testGridPosition)
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -229,14 +250,20 @@ public class Piece : MonoBehaviour
                     {
                         if (piece.IsDark() != isDark)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                     else if (piece.GetPieceType() == "King")
                     {
                         if (piece.GetGridPosition() == sePos_grid)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -267,7 +294,10 @@ public class Piece : MonoBehaviour
                         {
                             if (!piece.IsDark() && isDark == true)
                             {
-                                return true;
+                                if (piece.GetGridPosition() != testGridPosition)
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -275,14 +305,20 @@ public class Piece : MonoBehaviour
                     {
                         if (piece.IsDark() != isDark)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                     else if (piece.GetPieceType() == "King")
                     {
                         if (piece.GetGridPosition() == swPos_grid)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -311,14 +347,20 @@ public class Piece : MonoBehaviour
                     {
                         if (piece.IsDark() != isDark)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                     else if (piece.GetPieceType() == "King")
                     {
                         if (piece.GetGridPosition() == southPos_grid)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -347,14 +389,20 @@ public class Piece : MonoBehaviour
                     {
                         if (piece.IsDark() != isDark)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                     else if (piece.GetPieceType() == "King")
                     {
                         if (piece.GetGridPosition() == northPos_grid)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -382,14 +430,20 @@ public class Piece : MonoBehaviour
                     {
                         if (piece.IsDark() != isDark)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                     else if (piece.GetPieceType() == "King")
                     {
                         if (piece.GetGridPosition() == eastPos_grid)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -418,14 +472,20 @@ public class Piece : MonoBehaviour
                     {
                         if (piece.IsDark() != isDark)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                     else if (piece.GetPieceType() == "King")
                     {
                         if (piece.GetGridPosition() == westPos_grid)
                         {
-                            return true;
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -449,7 +509,10 @@ public class Piece : MonoBehaviour
                 Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest1);
                 if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
                 {
-                    return true;
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -461,7 +524,10 @@ public class Piece : MonoBehaviour
                 Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest2);
                 if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
                 {
-                    return true;
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -473,7 +539,10 @@ public class Piece : MonoBehaviour
                 Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest3);
                 if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
                 {
-                    return true;
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -485,7 +554,10 @@ public class Piece : MonoBehaviour
                 Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest4);
                 if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
                 {
-                    return true;
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
                 }
             }
         }

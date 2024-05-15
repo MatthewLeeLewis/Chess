@@ -82,7 +82,7 @@ public class PieceControlSystem : MonoBehaviour
                     {
                         Transform testBox = selectedPiece.GetBox();
                         Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
-                        if (!PieceManager.Instance.GetDarkKing().IsThreatened())
+                        if (!PieceManager.Instance.GetDarkKing().IsThreatened(mouseGridPosition))
                         {
                             SetBusy();
                             selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
@@ -96,7 +96,7 @@ public class PieceControlSystem : MonoBehaviour
                     {
                         Transform testBox = selectedPiece.GetBox();
                         Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
-                        if (!PieceManager.Instance.GetLightKing().IsThreatened())
+                        if (!PieceManager.Instance.GetLightKing().IsThreatened(mouseGridPosition))
                         {
                             SetBusy();
                             selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
