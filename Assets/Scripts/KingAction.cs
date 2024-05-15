@@ -54,8 +54,8 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                         continue;
                     }
                 }
-
-                bool valid = true;
+                
+                //bool valid = true;
                 List<Piece> enemyPieceList;
                 if (piece.IsDark())
                 {
@@ -91,7 +91,7 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                 }
                 
                 
-                
+                /*
                 foreach (Piece enemy in enemyPieceList)
                 {
                     
@@ -105,8 +105,8 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                 if (!valid)
                 {
                     continue;
-                }
-
+                }*/
+            
 
                 validGridPositionList.Add(testGridPosition);
             }

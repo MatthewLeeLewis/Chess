@@ -113,8 +113,8 @@ public class KnightAction : PieceAction // By making the base class abstract, in
                 }
 
                 piece.EnableCollider();
-                TestBoxDestroy?.Invoke(this, EventArgs.Empty);
-                */
+                TestBoxDestroy?.Invoke(this, EventArgs.Empty);*/
+                
                 validGridPositionList.Add(testGridPosition);
             }
         }

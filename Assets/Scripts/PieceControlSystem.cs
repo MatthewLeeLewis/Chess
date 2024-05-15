@@ -65,7 +65,10 @@ public class PieceControlSystem : MonoBehaviour
             return; // Try to select a piece and end this event if one is selected.
         }
 
-        HandleSelectedAction();
+        if (selectedPiece.IsDark() == TurnSystem.Instance.IsDarkTurn())
+        {
+            HandleSelectedAction();
+        }
     }
 
     private void HandleSelectedAction()
@@ -87,6 +90,7 @@ public class PieceControlSystem : MonoBehaviour
                             SetBusy();
                             selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
                             OnActionStarted?.Invoke(this, EventArgs.Empty);
+                            TurnSystem.Instance.NextTurn();
                         }
                     }
                 }
@@ -101,6 +105,7 @@ public class PieceControlSystem : MonoBehaviour
                             SetBusy();
                             selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
                             OnActionStarted?.Invoke(this, EventArgs.Empty);
+                            TurnSystem.Instance.NextTurn();
                         }
                     }
                 }
@@ -108,9 +113,18 @@ public class PieceControlSystem : MonoBehaviour
             }
             else if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
             {
-                SetBusy();
-                selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
-                OnActionStarted?.Invoke(this, EventArgs.Empty);
+                if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
+                {
+                    Transform testBox = selectedPiece.GetBox();
+                    Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
+                    if (!testBox.GetComponent<TestBox>().IsThreatened(mouseGridPosition))
+                    {
+                        SetBusy();
+                        selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
+                        OnActionStarted?.Invoke(this, EventArgs.Empty);
+                        TurnSystem.Instance.NextTurn();
+                    } 
+                }
             }
         }
     }
@@ -153,7 +167,7 @@ public class PieceControlSystem : MonoBehaviour
                         return false;
                     }
 
-                    if (piece.IsDark())
+                    if (piece.IsDark() != TurnSystem.Instance.IsDarkTurn())
                     {
                         // Piece is an enemy
                         return false;

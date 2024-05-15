@@ -9,7 +9,7 @@ public class TurnSystem : MonoBehaviour
     public event EventHandler OnTurnChanged;
 
     private int turnNumber = 1;
-    private bool isLightTurn = true;
+    private bool isDarkTurn = false;
 
     private void Awake() 
     {
@@ -25,7 +25,7 @@ public class TurnSystem : MonoBehaviour
     public void NextTurn()
     {
         turnNumber++;
-        isLightTurn = !isLightTurn;
+        isDarkTurn = !isDarkTurn;
 
         OnTurnChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -35,8 +35,8 @@ public class TurnSystem : MonoBehaviour
         return turnNumber;
     }
 
-    public bool IsLightTurn()
+    public bool IsDarkTurn()
     {
-        return isLightTurn;
+        return isDarkTurn;
     }
 }
