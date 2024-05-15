@@ -47,9 +47,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12717a5f887280f4cac708404176c15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  piecesLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
   isDark: 0
   testBox: {fileID: 1812778518072447788, guid: 754f6698af034e24e9c7827aec1b21e4, type: 3}
   boxCollider: {fileID: 4982015136940654656}
+  pieceType: 3
 --- !u!65 &4982015136940654656
 BoxCollider:
   m_ObjectHideFlags: 0

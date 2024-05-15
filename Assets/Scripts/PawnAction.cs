@@ -126,6 +126,8 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
                     continue;
                 }
 
+                /*
+
                 bool valid = true;
                 piece.DeactivateCollider();
                 Transform testBox = piece.GetBox();
@@ -166,6 +168,7 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
                 
                 piece.EnableCollider();
                 TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+                */
                 validGridPositionList.Add(testGridPosition);
             }
         }

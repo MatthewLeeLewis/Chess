@@ -6,6 +6,7 @@ using UnityEngine;
 public class KnightAction : PieceAction // By making the base class abstract, instances of this class cannot be created, only subclasses.
 {
     public event EventHandler OnStopMoving;
+    public static event EventHandler TestBoxDestroy;
     [SerializeField] private LayerMask piecesLayerMask;
 
     private void Update()
@@ -71,10 +72,53 @@ public class KnightAction : PieceAction // By making the base class abstract, in
                     }
                 }
 
+                /*
+                Vector3 gridWorldPosition = BoardGrid.Instance.GetWorldPosition(testGridPosition);
+                bool validToKing = true;
+                piece.DeactivateCollider();
+                Transform testBox = piece.GetBox();
+                Instantiate(testBox, gridWorldPosition, Quaternion.identity);
+
+                Piece king;
+                List<Piece> enemyPieceList;
+
+                if (piece.IsDark())
+                {
+                    king = PieceManager.Instance.GetDarkKing();
+                    enemyPieceList = PieceManager.Instance.GetLightPieceList();
+                }
+                else
+                {
+                    king = PieceManager.Instance.GetLightKing();
+                    enemyPieceList = PieceManager.Instance.GetDarkPieceList();
+                }
+                GridPosition kingPos = king.GetGridPosition();
+
+                foreach (Piece enemy in enemyPieceList)
+                {
+                    if (!enemy.GetPieceAction().IsValidKingPosition(kingPos))
+                    {
+                        TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+                        piece.EnableCollider();
+                        validToKing = false;
+                        continue;
+                    }
+                }
+
+                if (!validToKing)
+                {
+                    TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+                    piece.EnableCollider();
+                    continue;
+                }
+
+                piece.EnableCollider();
+                TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+                */
                 validGridPositionList.Add(testGridPosition);
             }
         }
-        
+        TestBoxDestroy?.Invoke(this, EventArgs.Empty);
         return validGridPositionList;
     }
 

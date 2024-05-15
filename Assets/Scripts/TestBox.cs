@@ -8,6 +8,8 @@ public class TestBox : MonoBehaviour
     void Start()
     {
         PawnAction.TestBoxDestroy += TestBoxDestroy;
+        KnightAction.TestBoxDestroy += TestBoxDestroy;
+        PieceControlSystem.TestBoxDestroy += TestBoxDestroy;
     }
 
     private void TestBoxDestroy(object sender, EventArgs e)
@@ -18,5 +20,7 @@ public class TestBox : MonoBehaviour
     private void OnDestroy()
     {
         PawnAction.TestBoxDestroy -= TestBoxDestroy;
+        KnightAction.TestBoxDestroy -= TestBoxDestroy;
+        PieceControlSystem.TestBoxDestroy -= TestBoxDestroy;
     }
 }

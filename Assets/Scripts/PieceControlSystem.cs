@@ -14,6 +14,7 @@ public class PieceControlSystem : MonoBehaviour
     public event EventHandler OnSelectedPieceChanged; // This is an event that allows subscribers to react to a selected piece being changed.
     public event EventHandler<bool> OnBusyChanged; 
     public event EventHandler OnActionStarted;
+    public static event EventHandler TestBoxDestroy;
 
 
     [SerializeField] private Piece selectedPiece; // This tracks which piece is selected.
@@ -73,7 +74,39 @@ public class PieceControlSystem : MonoBehaviour
         {
             GridPosition mouseGridPosition = BoardGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
 
-            if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
+            if (selectedPiece.GetPieceType() != "King")
+            {
+                if (selectedPiece.IsDark())
+                {
+                    if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
+                    {
+                        Transform testBox = selectedPiece.GetBox();
+                        Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
+                        if (!PieceManager.Instance.GetDarkKing().IsThreatened())
+                        {
+                            SetBusy();
+                            selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
+                            OnActionStarted?.Invoke(this, EventArgs.Empty);
+                        }
+                    }
+                }
+                else
+                {
+                    if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
+                    {
+                        Transform testBox = selectedPiece.GetBox();
+                        Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
+                        if (!PieceManager.Instance.GetLightKing().IsThreatened())
+                        {
+                            SetBusy();
+                            selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
+                            OnActionStarted?.Invoke(this, EventArgs.Empty);
+                        }
+                    }
+                }
+                TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+            }
+            else if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
             {
                 SetBusy();
                 selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
@@ -136,8 +169,14 @@ public class PieceControlSystem : MonoBehaviour
 
     private void SetSelectedPiece(Piece piece) // Simple method to change the selected piece and trigger the event for if a selected piece was changed.
     {
+        if (selectedPiece != null)
+        {
+            selectedPiece.EnableCollider();
+        }
+        
         selectedPiece = piece;
         SetSelectedAction(piece.GetPieceAction());
+        selectedPiece.DeactivateCollider();
         OnSelectedPieceChanged?.Invoke(this, EventArgs.Empty); 
     }
 
