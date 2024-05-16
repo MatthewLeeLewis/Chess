@@ -61,16 +61,21 @@ public class PieceManager : MonoBehaviour
         Piece piece = sender as Piece;
 
         pieceList.Remove(piece);
-        
+        BoardGrid.Instance.RemovePieceAtGridPosition(piece.GetGridPosition(), piece);
+
         if (piece.IsDark())
         {
             darkPieceList.Remove(piece);
             capturedDarkList.Add(piece);
+            Debug.Log("There are " + capturedDarkList.Count + " captured dark pieces.");
         } else
         {
             lightPieceList.Remove(piece);
             capturedLightList.Add(piece);
+            Debug.Log("There are " + capturedLightList.Count + " captured light pieces.");
         }
+        //Destroy(piece.gameObject);
+        piece.gameObject.SetActive(false);
     }
 
     public List<Piece> GetPieceList()

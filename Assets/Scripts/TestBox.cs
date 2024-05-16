@@ -31,7 +31,7 @@ public class TestBox : MonoBehaviour
 
     public bool IsThreatened(GridPosition testGridPosition)
     {
-        Vector3 pieceWorldPosition = PieceControlSystem.Instance.GetSelectedPiece().GetWorldPosition();
+        Vector3 pieceWorldPosition = transform.position;
 
         float heightDisplacement = 0.6f;
         GridPosition nwPosOffset = new GridPosition(-1, 1);
@@ -59,6 +59,7 @@ public class TestBox : MonoBehaviour
                             {
                                 if (piece.GetGridPosition() != testGridPosition)
                                 {
+                                    Debug.Log("Pawn blocked movement.");
                                     return true;
                                 }
                             }
@@ -489,7 +490,7 @@ public class TestBox : MonoBehaviour
                 }
             }
         }
-
+        Debug.Log("movement allowed.");
         return false;
     }
 }

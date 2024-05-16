@@ -15,6 +15,8 @@ public class PieceControlSystem : MonoBehaviour
     public event EventHandler<bool> OnBusyChanged; 
     public event EventHandler OnActionStarted;
     public static event EventHandler TestBoxDestroy;
+    [SerializeField] private Transform testBox_king;
+    private GridPosition kingTestPos;
 
 
     [SerializeField] private Piece selectedPiece; // This tracks which piece is selected.
@@ -115,17 +117,26 @@ public class PieceControlSystem : MonoBehaviour
             {
                 if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
                 {
-                    Transform testBox = selectedPiece.GetBox();
-                    Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
-                    if (!testBox.GetComponent<TestBox>().IsThreatened(mouseGridPosition))
-                    {
-                        SetBusy();
-                        selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
-                        OnActionStarted?.Invoke(this, EventArgs.Empty);
-                        TurnSystem.Instance.NextTurn();
-                    } 
+                    Instantiate(testBox_king, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
+                  
+                    kingTestPos = mouseGridPosition;
+
+                    Invoke("TestKingBox", 1f);
+                    TestBoxDestroy?.Invoke(this, EventArgs.Empty);
                 }
             }
+        }
+    }
+
+    private void TestKingBox()
+    {
+        TestBox kingBoxTest = testBox_king.GetComponent<TestBox>();
+        if (!kingBoxTest.IsThreatened(kingTestPos))
+        {
+            SetBusy();
+            selectedPieceAction.TakeAction(kingTestPos, ClearBusy);
+            OnActionStarted?.Invoke(this, EventArgs.Empty);
+            TurnSystem.Instance.NextTurn();
         }
     }
     
@@ -143,11 +154,11 @@ public class PieceControlSystem : MonoBehaviour
         GridPosition gridPosition = selectedPiece.GetGridPosition();
         List<Piece> pieceList = BoardGrid.Instance.GetPieceListAtGridPosition(gridPosition);
 
-        foreach (Piece piece in pieceList)
+        for (int i = 0; i <pieceList.Count; i++)
         {
-            if (piece != selectedPiece)
+            if (pieceList[i] != selectedPiece)
             {
-                piece.Die();
+                pieceList[i].Die();
             }
         }
     }

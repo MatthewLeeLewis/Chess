@@ -77,7 +77,6 @@ public class Piece : MonoBehaviour
 
     public void Die()
     {
-        Destroy(this.gameObject);
         OnAnyPieceDead?.Invoke(this, EventArgs.Empty);
     }
 
@@ -131,6 +130,7 @@ public class Piece : MonoBehaviour
                             {
                                 if (piece.GetGridPosition() != testGridPosition)
                                 {
+                                    Debug.Log("Pawn blocked movement.");
                                     return true;
                                 }
                             }
@@ -561,7 +561,7 @@ public class Piece : MonoBehaviour
                 }
             }
         }
-
+        Debug.Log("movement allowed.");
         return false;
     }   
 }
