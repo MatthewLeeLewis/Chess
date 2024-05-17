@@ -130,6 +130,7 @@ public class Piece : MonoBehaviour
                             {
                                 if (piece.GetGridPosition() != testGridPosition)
                                 {
+                                    Debug.DrawLine(pieceWorldPosition + Vector3.up * heightDisplacement, nwHit.point, Color.white, 5f, true);
                                     Debug.Log("Pawn blocked movement.");
                                     return true;
                                 }
@@ -142,6 +143,7 @@ public class Piece : MonoBehaviour
                         {
                             if (piece.GetGridPosition() != testGridPosition)
                             {
+                                Debug.DrawLine(pieceWorldPosition + Vector3.up * heightDisplacement, nwHit.point, Color.white, 5f, true);
                                 return true;
                             }
                         }
@@ -152,6 +154,7 @@ public class Piece : MonoBehaviour
                         {
                             if (piece.GetGridPosition() != testGridPosition)
                             {
+                                Debug.DrawLine(pieceWorldPosition + Vector3.up * heightDisplacement, nwHit.point, Color.white, 5f, true);
                                 return true;
                             }
                         }
@@ -186,6 +189,7 @@ public class Piece : MonoBehaviour
                             {
                                 if (piece.GetGridPosition() != testGridPosition)
                                 {
+                                    //Debug.DrawLine(pieceWorldPosition + Vector3.up * heightDisplacement, neHit.point, Color.white, 5f, true);
                                     return true;
                                 }
                             }
@@ -197,6 +201,7 @@ public class Piece : MonoBehaviour
                         {
                             if (piece.GetGridPosition() != testGridPosition)
                             {
+                                //Debug.DrawLine(pieceWorldPosition + Vector3.up * heightDisplacement, neHit.point, Color.white, 5f, true);
                                 return true;
                             }
                         }
@@ -207,6 +212,7 @@ public class Piece : MonoBehaviour
                         {
                             if (piece.GetGridPosition() != testGridPosition)
                             {
+                                //Debug.DrawLine(pieceWorldPosition + Vector3.up * heightDisplacement, neHit.point, Color.white, 5f, true);
                                 return true;
                             }
                         }
@@ -497,10 +503,18 @@ public class Piece : MonoBehaviour
         GridPosition knightThreat2 = new GridPosition(-1, -2);
         GridPosition knightThreat3 = new GridPosition(1, 2);
         GridPosition knightThreat4 = new GridPosition(1, -2);
+        GridPosition knightThreat5 = new GridPosition(2, 1);
+        GridPosition knightThreat6 = new GridPosition(2, -1);
+        GridPosition knightThreat7 = new GridPosition(-2, 1);
+        GridPosition knightThreat8 = new GridPosition(-2, -1);
         GridPosition knightThreatTest1 = gridPosition + knightThreat1;
         GridPosition knightThreatTest2 = gridPosition + knightThreat2;
         GridPosition knightThreatTest3 = gridPosition + knightThreat3;
         GridPosition knightThreatTest4 = gridPosition + knightThreat4;
+        GridPosition knightThreatTest5 = gridPosition + knightThreat5;
+        GridPosition knightThreatTest6 = gridPosition + knightThreat6;
+        GridPosition knightThreatTest7 = gridPosition + knightThreat7;
+        GridPosition knightThreatTest8 = gridPosition + knightThreat8;
 
         if (BoardGrid.Instance.IsValidGridPosition(knightThreatTest1))
         {
@@ -552,6 +566,66 @@ public class Piece : MonoBehaviour
             if (BoardGrid.Instance.HasAnyPieceOnGridPosition(knightThreatTest4))
             {
                 Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest4);
+                if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
+                {
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (BoardGrid.Instance.IsValidGridPosition(knightThreatTest5))
+        {
+            if (BoardGrid.Instance.HasAnyPieceOnGridPosition(knightThreatTest5))
+            {
+                Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest5);
+                if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
+                {
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (BoardGrid.Instance.IsValidGridPosition(knightThreatTest6))
+        {
+            if (BoardGrid.Instance.HasAnyPieceOnGridPosition(knightThreatTest6))
+            {
+                Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest6);
+                if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
+                {
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (BoardGrid.Instance.IsValidGridPosition(knightThreatTest7))
+        {
+            if (BoardGrid.Instance.HasAnyPieceOnGridPosition(knightThreatTest7))
+            {
+                Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest7);
+                if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
+                {
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (BoardGrid.Instance.IsValidGridPosition(knightThreatTest8))
+        {
+            if (BoardGrid.Instance.HasAnyPieceOnGridPosition(knightThreatTest8))
+            {
+                Piece testPiece = BoardGrid.Instance.GetPieceAtGridPosition(knightThreatTest8);
                 if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
                 {
                     if (testPiece.GetGridPosition() != testGridPosition)

@@ -12,11 +12,10 @@ public class PieceControlSystem : MonoBehaviour
 {
     public static PieceControlSystem Instance { get; private set; } // This ensures that the instance of this object can be gotten publicly but cannot be set publicly.
     public event EventHandler OnSelectedPieceChanged; // This is an event that allows subscribers to react to a selected piece being changed.
-    public event EventHandler<bool> OnBusyChanged; 
+    //public event EventHandler<bool> OnBusyChanged;
+    public event EventHandler OnBusyChanged;  
     public event EventHandler OnActionStarted;
     public static event EventHandler TestBoxDestroy;
-    [SerializeField] private Transform testBox_king;
-    private GridPosition kingTestPos;
 
 
     [SerializeField] private Piece selectedPiece; // This tracks which piece is selected.
@@ -111,47 +110,41 @@ public class PieceControlSystem : MonoBehaviour
                         }
                     }
                 }
+                Invoke("TestBoxDestruction", 1f);
                 TestBoxDestroy?.Invoke(this, EventArgs.Empty);
             }
             else if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
             {
-                if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
+                if (!BoardGrid.Instance.IsThreatened(mouseGridPosition, selectedPiece.IsDark()))
                 {
-                    if (!BoardGrid.Instance.IsThreatened(mouseGridPosition, selectedPiece.IsDark()))
-                    {
-                        SetBusy();
-                        selectedPieceAction.TakeAction(kingTestPos, ClearBusy);
-                        OnActionStarted?.Invoke(this, EventArgs.Empty);
-                        TurnSystem.Instance.NextTurn();
-                    }
-                    // TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+                    SetBusy();
+                    selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
+                    OnActionStarted?.Invoke(this, EventArgs.Empty);
+                    TurnSystem.Instance.NextTurn();
                 }
+                Invoke("TestBoxDestruction", 1f);
+                TestBoxDestroy?.Invoke(this, EventArgs.Empty);
             }
         }
     }
 
-    private void TestKingBox()
+    private void TestBoxDestruction()
     {
-        TestBox kingBoxTest = testBox_king.GetComponent<TestBox>();
-        if (!kingBoxTest.IsThreatened(kingTestPos))
-        {
-            SetBusy();
-            selectedPieceAction.TakeAction(kingTestPos, ClearBusy);
-            OnActionStarted?.Invoke(this, EventArgs.Empty);
-            TurnSystem.Instance.NextTurn();
-        }
+        TestBoxDestroy?.Invoke(this, EventArgs.Empty);
     }
-    
+
     private void SetBusy()
     {
         isBusy = true;
-        OnBusyChanged?.Invoke(this, isBusy);
+        //OnBusyChanged?.Invoke(this, isBusy);
+        OnBusyChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void ClearBusy()
     {
         isBusy = false;
-        OnBusyChanged?.Invoke(this, isBusy);
+        //OnBusyChanged?.Invoke(this, isBusy);
+        OnBusyChanged?.Invoke(this, EventArgs.Empty);
 
         GridPosition gridPosition = selectedPiece.GetGridPosition();
         List<Piece> pieceList = BoardGrid.Instance.GetPieceListAtGridPosition(gridPosition);
@@ -220,6 +213,11 @@ public class PieceControlSystem : MonoBehaviour
     public PieceAction GetSelectedAction()
     {
         return selectedPieceAction;
+    }
+
+    public bool IsBusy()
+    {
+        return isBusy;
     }
 
 }

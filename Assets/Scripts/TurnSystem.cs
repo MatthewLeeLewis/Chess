@@ -10,7 +10,7 @@ public class TurnSystem : MonoBehaviour
 
     private int turnNumber = 1;
     private bool isDarkTurn = false;
-
+    
     private void Awake() 
     {
         if (Instance != null) // This if check ensures that multiple instances of this object do not exist and reports it if they do, and destroys the duplicate.

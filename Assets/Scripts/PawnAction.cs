@@ -78,7 +78,7 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
                     }
                 }
 
-                if (z > 1)
+                if (z > 0)
                 {
                     if (piece.IsDark())
                     {
@@ -99,6 +99,10 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
                     if (!BoardGrid.Instance.HasAnyPieceOnGridPosition(testGridPosition)) // if check to prevent movement to where another unit already is.
                     {
                         continue; // exits current for iteration and moves onto the next one.
+                    }
+                    if (z == 0)
+                    {
+                        continue;
                     }
                     else
                     {
