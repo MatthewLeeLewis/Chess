@@ -11,7 +11,7 @@ public class Piece : MonoBehaviour
 {
     public static event EventHandler OnAnyPieceDead;
     public static event EventHandler OnAnyPieceSpawned;
-    [SerializeField] private LayerMask piecesLayerMask;
+    [SerializeField] private LayerMask piecesLayerMask;  
 
     private enum PieceType 
     {

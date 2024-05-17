@@ -117,12 +117,14 @@ public class PieceControlSystem : MonoBehaviour
             {
                 if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
                 {
-                    Instantiate(testBox_king, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
-                  
-                    kingTestPos = mouseGridPosition;
-
-                    Invoke("TestKingBox", 1f);
-                    TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+                    if (!BoardGrid.Instance.IsThreatened(mouseGridPosition, selectedPiece.IsDark()))
+                    {
+                        SetBusy();
+                        selectedPieceAction.TakeAction(kingTestPos, ClearBusy);
+                        OnActionStarted?.Invoke(this, EventArgs.Empty);
+                        TurnSystem.Instance.NextTurn();
+                    }
+                    // TestBoxDestroy?.Invoke(this, EventArgs.Empty);
                 }
             }
         }

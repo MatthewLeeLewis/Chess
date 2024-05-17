@@ -8,6 +8,8 @@ public class BoardGrid : MonoBehaviour
 
     [SerializeField] private Transform gridDebugObjectPrefab; // Initialize Serialized Field for Debug Prefab.
     private GridSystem gridSystem; // Initialize a grid system object to work with.
+    [SerializeField] private LayerMask piecesLayerMask;
+
 
     private void Awake()
     {
@@ -71,5 +73,471 @@ public class BoardGrid : MonoBehaviour
     {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         return gridObject.GetPiece();
+    }
+
+    public bool IsThreatened(GridPosition testGridPosition, bool isDark)
+    {
+        Vector3 pieceWorldPosition = GetWorldPosition(testGridPosition);
+        GridPosition gridPosition = testGridPosition;
+
+        float heightDisplacement = 0.6f;
+        GridPosition nwPosOffset = new GridPosition(-1, 1);
+        GridPosition nwPos_grid = gridPosition + nwPosOffset;
+
+        if (IsValidGridPosition(nwPos_grid))
+        {
+            Vector3 nwPos = GetWorldPosition(nwPos_grid);
+
+            Vector3 northwest = (nwPos - pieceWorldPosition).normalized;
+            if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    northwest,
+                    out RaycastHit nwHit,
+                    32f,
+                    piecesLayerMask))
+            {
+                if (nwHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Pawn")
+                    {
+                        if (piece.GetGridPosition() == nwPos_grid)
+                        {
+                            if (piece.IsDark() && isDark == false)
+                            {
+                                if (piece.GetGridPosition() != testGridPosition)
+                                {
+                                    Debug.Log("Pawn blocked movement.");
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "Bishop" || piece.GetPieceType() == "Queen")
+                    {
+                        if (piece.IsDark() != isDark)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "King")
+                    {
+                        if (piece.GetGridPosition() == nwPos_grid)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        GridPosition nePosOffset = new GridPosition(1, 1);
+        GridPosition nePos_grid = gridPosition + nePosOffset;
+
+        if (IsValidGridPosition(nePos_grid))
+        {
+            Vector3 nePos = GetWorldPosition(nePos_grid);
+
+            Vector3 northeast = (nePos - pieceWorldPosition).normalized;
+            if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    northeast,
+                    out RaycastHit neHit,
+                    32f,
+                    piecesLayerMask))
+            {
+                if (neHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Pawn")
+                    {
+                        if (piece.GetGridPosition() == nePos_grid)
+                        {
+                            if (piece.IsDark() && isDark == false)
+                            {
+                                if (piece.GetGridPosition() != testGridPosition)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "Bishop" || piece.GetPieceType() == "Queen")
+                    {
+                        if (piece.IsDark() != isDark)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "King")
+                    {
+                        if (piece.GetGridPosition() == nePos_grid)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        GridPosition sePosOffset = new GridPosition(1, -1);
+        GridPosition sePos_grid = gridPosition + sePosOffset;
+
+        if (IsValidGridPosition(sePos_grid))
+        {
+            Vector3 sePos = GetWorldPosition(sePos_grid);
+
+            Vector3 southeast = (sePos - pieceWorldPosition).normalized;
+            if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    southeast,
+                    out RaycastHit seHit,
+                    32f,
+                    piecesLayerMask))
+            {
+                if (seHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Pawn")
+                    {
+                        if (piece.GetGridPosition() == sePos_grid)
+                        {
+                            if (!piece.IsDark() && isDark == true)
+                            {
+                                if (piece.GetGridPosition() != testGridPosition)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "Bishop" || piece.GetPieceType() == "Queen")
+                    {
+                        if (piece.IsDark() != isDark)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "King")
+                    {
+                        if (piece.GetGridPosition() == sePos_grid)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        GridPosition swPosOffset = new GridPosition(-1, -1);
+        GridPosition swPos_grid = gridPosition + swPosOffset;
+
+        if (IsValidGridPosition(swPos_grid))
+        {
+            Vector3 swPos = GetWorldPosition(swPos_grid);
+
+            Vector3 southwest = (swPos - pieceWorldPosition).normalized;
+            if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    southwest,
+                    out RaycastHit swHit,
+                    32f,
+                    piecesLayerMask))
+            {
+                if (swHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Pawn")
+                    {
+                        if (piece.GetGridPosition() == swPos_grid)
+                        {
+                            if (!piece.IsDark() && isDark == true)
+                            {
+                                if (piece.GetGridPosition() != testGridPosition)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "Bishop" || piece.GetPieceType() == "Queen")
+                    {
+                        if (piece.IsDark() != isDark)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "King")
+                    {
+                        if (piece.GetGridPosition() == swPos_grid)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        GridPosition southPosOffset = new GridPosition(0, -1);
+        GridPosition southPos_grid = gridPosition + southPosOffset;
+
+        if (IsValidGridPosition(southPos_grid))
+        {
+            Vector3 southPos = GetWorldPosition(southPos_grid);
+
+            Vector3 south = (southPos - pieceWorldPosition).normalized;
+            if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    south,
+                    out RaycastHit southHit,
+                    32f,
+                    piecesLayerMask))
+            {
+                if (southHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Rook" || piece.GetPieceType() == "Queen")
+                    {
+                        if (piece.IsDark() != isDark)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "King")
+                    {
+                        if (piece.GetGridPosition() == southPos_grid)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        GridPosition northPosOffset = new GridPosition(0, 1);
+        GridPosition northPos_grid = gridPosition + northPosOffset;
+
+        if (IsValidGridPosition(northPos_grid))
+        {
+            Vector3 northPos = GetWorldPosition(northPos_grid);
+
+            Vector3 north = (northPos - pieceWorldPosition).normalized;
+            if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    north,
+                    out RaycastHit northHit,
+                    32f,
+                    piecesLayerMask))
+            {
+                if (northHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Rook" || piece.GetPieceType() == "Queen")
+                    {
+                        if (piece.IsDark() != isDark)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "King")
+                    {
+                        if (piece.GetGridPosition() == northPos_grid)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        GridPosition eastPosOffset = new GridPosition(1, 0);
+        GridPosition eastPos_grid = gridPosition + eastPosOffset;
+
+        if (IsValidGridPosition(eastPos_grid))
+        {
+            Vector3 eastPos = GetWorldPosition(eastPos_grid);
+
+            Vector3 east = (eastPos - pieceWorldPosition).normalized;
+            if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    east,
+                    out RaycastHit eastHit,
+                    32f,
+                    piecesLayerMask))
+            {
+                if (eastHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Rook" || piece.GetPieceType() == "Queen")
+                    {
+                        if (piece.IsDark() != isDark)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "King")
+                    {
+                        if (piece.GetGridPosition() == eastPos_grid)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        GridPosition westPosOffset = new GridPosition(-1, 0);
+        GridPosition westPos_grid = gridPosition + westPosOffset;
+
+        if (IsValidGridPosition(westPos_grid))
+        {
+            Vector3 westPos = GetWorldPosition(westPos_grid);
+
+            Vector3 west = (westPos - pieceWorldPosition).normalized;
+            if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    west,
+                    out RaycastHit westHit,
+                    32f,
+                    piecesLayerMask))
+            {
+                if (westHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Rook" || piece.GetPieceType() == "Queen")
+                    {
+                        if (piece.IsDark() != isDark)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (piece.GetPieceType() == "King")
+                    {
+                        if (piece.GetGridPosition() == westPos_grid)
+                        {
+                            if (piece.GetGridPosition() != testGridPosition)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        GridPosition knightThreat1 = new GridPosition(-1, 2);
+        GridPosition knightThreat2 = new GridPosition(-1, -2);
+        GridPosition knightThreat3 = new GridPosition(1, 2);
+        GridPosition knightThreat4 = new GridPosition(1, -2);
+        GridPosition knightThreatTest1 = gridPosition + knightThreat1;
+        GridPosition knightThreatTest2 = gridPosition + knightThreat2;
+        GridPosition knightThreatTest3 = gridPosition + knightThreat3;
+        GridPosition knightThreatTest4 = gridPosition + knightThreat4;
+
+        if (IsValidGridPosition(knightThreatTest1))
+        {
+            if (HasAnyPieceOnGridPosition(knightThreatTest1))
+            {
+                Piece testPiece = GetPieceAtGridPosition(knightThreatTest1);
+                if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
+                {
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (IsValidGridPosition(knightThreatTest2))
+        {
+            if (HasAnyPieceOnGridPosition(knightThreatTest2))
+            {
+                Piece testPiece = GetPieceAtGridPosition(knightThreatTest2);
+                if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
+                {
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (IsValidGridPosition(knightThreatTest3))
+        {
+            if (HasAnyPieceOnGridPosition(knightThreatTest3))
+            {
+                Piece testPiece = GetPieceAtGridPosition(knightThreatTest3);
+                if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
+                {
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (IsValidGridPosition(knightThreatTest4))
+        {
+            if (HasAnyPieceOnGridPosition(knightThreatTest4))
+            {
+                Piece testPiece = GetPieceAtGridPosition(knightThreatTest4);
+                if (testPiece.GetPieceType() == "Knight" && testPiece.IsDark() != isDark)
+                {
+                    if (testPiece.GetGridPosition() != testGridPosition)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        Debug.Log("movement allowed.");
+        return false;
     }
 }
