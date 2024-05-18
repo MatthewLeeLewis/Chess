@@ -16,8 +16,6 @@ public class UICanvas : MonoBehaviour
     void Start()
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
-        PieceControlSystem.Instance.OnBusyChanged += PieceControlSystem_OnBusyChanged;
-        PieceControlSystem.Instance.OnSelectedPieceChanged += PieceControlSystem_OnSelectedPieceChanged;
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
@@ -25,30 +23,17 @@ public class UICanvas : MonoBehaviour
         if (TurnSystem.Instance.IsDarkTurn())
         {
             turnText.text = "Dark Turn";
-        }
-        else
-        {
-            turnText.text = "Light Turn";
-        }
-    }
-
-    private void PieceControlSystem_OnBusyChanged(object sender, EventArgs e)
-    {
-        CheckCheckText();
-    }
-    private void PieceControlSystem_OnSelectedPieceChanged(object sender, EventArgs e)
-    {
-        CheckCheckText();
-    }
-
-    public void CheckCheckText()
-    {
-        if (TurnSystem.Instance.IsDarkTurn())
-        {
+        
             GridPosition gridPosition = PieceManager.Instance.GetDarkKing().GetGridPosition();
             if (PieceManager.Instance.GetDarkKing().IsThreatened(gridPosition))
             {
                 checkText.enabled = true;
+                if (CheckCheckmate(true))
+                {
+                    checkText.text = "CHECKMATE!";
+                }
+                Invoke("EnableThreatCollider", 1f);
+
             }
             else
             {
@@ -57,15 +42,301 @@ public class UICanvas : MonoBehaviour
         }
         else
         {
+            turnText.text = "Light Turn";
+        
             GridPosition gridPosition = PieceManager.Instance.GetLightKing().GetGridPosition();
             if (PieceManager.Instance.GetLightKing().IsThreatened(gridPosition))
             {
                 checkText.enabled = true;
+                if (CheckCheckmate(false))
+                {
+                    checkText.text = "CHECKMATE!";
+                }
+                Invoke("EnableThreatCollider", 1f);
             }
             else
             {
                 checkText.enabled = false;
             }
         }
+    }
+
+    private bool CheckCheckmate(bool isDarkCheck)
+    {
+        
+
+        if (isDarkCheck)
+        {
+            GridPosition threatPos = PieceControlSystem.Instance.GetLastMoved().GetGridPosition();
+            GridPosition kingPos = PieceManager.Instance.GetDarkKing().GetGridPosition();
+            if (PieceManager.Instance.GetDarkKing().GetPieceAction().GetValidActionGridPositionList().Count > 0)
+            {
+                return false;
+            }
+            else
+            {
+                PieceControlSystem.Instance.GetLastMoved().DeactivateCollider();
+            }
+            for(int i = 0; i < PieceManager.Instance.GetDarkPieceList().Count; i++)
+            {
+                if (PieceManager.Instance.GetLightPieceList()[i].GetPieceType() == "King")
+                {
+                    continue;
+                }
+                if (PieceManager.Instance.GetDarkPieceList()[i].GetPieceAction().GetValidActionGridPositionList().Contains(threatPos))
+                {
+                    return false;
+                }
+                if (PieceControlSystem.Instance.GetLastMoved().GetPieceType() == "Rook" || PieceControlSystem.Instance.GetLastMoved().GetPieceType() == "Queen")
+                {
+                    foreach (GridPosition gridPosition in (PieceManager.Instance.GetDarkPieceList()[i].GetPieceAction().GetValidActionGridPositionList()))
+                    {
+                        if (kingPos.x == threatPos.x)
+                        {
+                            if (kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x == kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x == kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                        if (kingPos.z == threatPos.z)
+                        {
+                            if (kingPos.x > threatPos.x)
+                            {
+                                if (gridPosition.z == kingPos.z)
+                                {
+                                    if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x)
+                            {
+                                if (gridPosition.z == kingPos.z)
+                                {
+                                    if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (PieceControlSystem.Instance.GetLastMoved().GetPieceType() == "Bishop" || PieceControlSystem.Instance.GetLastMoved().GetPieceType() == "Queen")
+                {
+                    foreach (GridPosition gridPosition in (PieceManager.Instance.GetDarkPieceList()[i].GetPieceAction().GetValidActionGridPositionList()))
+                    {
+                        /*
+                        Vector2 testPosVector = new Vector2(gridPosition.x, gridPosition.z);
+                        Vector2 kingPosVector = new Vector2(kingPos.x, kingPos.z);
+                        Vector2 threatPosVector = new Vector2(threatPos.x, threatPos.z);*/
+
+                        if (gridPosition.z - gridPosition.x == kingPos.z - kingPos.x)
+                        {
+                            if (kingPos.x > threatPos.x && kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x && kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x && kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x > threatPos.x && kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+        else
+        {
+            GridPosition threatPos = PieceControlSystem.Instance.GetLastMoved().GetGridPosition();
+            GridPosition kingPos = PieceManager.Instance.GetLightKing().GetGridPosition();
+            if (PieceManager.Instance.GetLightKing().GetPieceAction().GetValidActionGridPositionList().Count > 0)
+            {
+                Debug.Log("The king can move");
+                Debug.Log(PieceManager.Instance.GetLightKing().GetPieceAction().GetValidActionGridPositionList().Count);
+                return false;
+            }
+            else
+            {
+                PieceControlSystem.Instance.GetLastMoved().DeactivateCollider();
+            }
+            for(int i = 0; i < PieceManager.Instance.GetLightPieceList().Count; i++)
+            {
+                if (PieceManager.Instance.GetLightPieceList()[i].GetPieceType() == "King")
+                {
+                    continue;
+                }
+                if (PieceManager.Instance.GetLightPieceList()[i].GetPieceAction().GetValidActionGridPositionList().Contains(threatPos))
+                {
+                    return false;
+                }
+                if (PieceControlSystem.Instance.GetLastMoved().GetPieceType() == "Rook" || PieceControlSystem.Instance.GetLastMoved().GetPieceType() == "Queen")
+                {
+                    foreach (GridPosition gridPosition in (PieceManager.Instance.GetLightPieceList()[i].GetPieceAction().GetValidActionGridPositionList()))
+                    {
+                        if (kingPos.x == threatPos.x)
+                        {
+                            if (kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x == kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x == kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                        if (kingPos.z == threatPos.z)
+                        {
+                            if (kingPos.x > threatPos.x)
+                            {
+                                if (gridPosition.z == kingPos.z)
+                                {
+                                    if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x)
+                            {
+                                if (gridPosition.z == kingPos.z)
+                                {
+                                    if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (PieceControlSystem.Instance.GetLastMoved().GetPieceType() == "Bishop" || PieceControlSystem.Instance.GetLastMoved().GetPieceType() == "Queen")
+                {
+                    foreach (GridPosition gridPosition in (PieceManager.Instance.GetLightPieceList()[i].GetPieceAction().GetValidActionGridPositionList()))
+                    {
+                        //Vector2 testPosVector = new Vector2(gridPosition.x, gridPosition.z);
+                        //Vector2 kingPosVector = new Vector2(kingPos.x, kingPos.z);
+                        //Vector2 threatPosVector = new Vector2(threatPos.x, threatPos.z);
+
+                        if (gridPosition.z - gridPosition.x == kingPos.z - kingPos.x)
+                        {
+                            if (kingPos.x > threatPos.x && kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x && kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        Debug.Log("False Return Here!");
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x && kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x > threatPos.x && kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private void EnableThreatCollider()
+    {
+        PieceControlSystem.Instance.GetLastMoved().EnableCollider();
     }
 }

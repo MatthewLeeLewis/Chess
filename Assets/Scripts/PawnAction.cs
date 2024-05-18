@@ -11,6 +11,13 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
     private bool hasMoved = false;
     private PieceAction pieceAction;
 
+    private bool enPassant = false;
+    [SerializeField] private bool enPass = false;
+    List<GridPosition> validGridPositionList = new List<GridPosition>();
+
+    private bool movingTwo = false;
+    [SerializeField] private bool justMovedTwo = false;
+
     protected override void Awake()
     {
         base.Awake();
@@ -42,7 +49,7 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
     }
     public override List<GridPosition> GetValidActionGridPositionList() // Function to test a unit's move distance against valid grid positions and only return a list of valid positions.
     {
-        List<GridPosition> validGridPositionList = new List<GridPosition>();
+        validGridPositionList.Clear();
 
         GridPosition pieceGridPosition = piece.GetGridPosition();
 
@@ -50,8 +57,12 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
         {
             for (int z = -2; z <= 2; z++)
             {
+                enPassant = false;
                 GridPosition offsetGridPosition = new GridPosition(x, z);
                 GridPosition testGridPosition = pieceGridPosition + offsetGridPosition;
+
+                Vector3 gridWorldPosition = BoardGrid.Instance.GetWorldPosition(testGridPosition);
+                Vector3 pieceWorldPosition = BoardGrid.Instance.GetWorldPosition(pieceGridPosition);
 
                 if (!BoardGrid.Instance.IsValidGridPosition(testGridPosition)) // if check to prevent movement out of bounds of grid.
                 {
@@ -68,13 +79,20 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
 
                 if (z > 1 || z < -1)
                 {
+                    movingTwo = true;
                     if (hasMoved)
                     {
+                        movingTwo = false;
                         continue;
                     }
                     if (x != 0)
                     {
+                        movingTwo = false;
                         continue;
+                    }
+                    else
+                    {
+                        movingTwo = true;
                     }
                 }
 
@@ -96,26 +114,58 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
 
                 if (x != 0)
                 {
+                    if (z == 0)
+                        {
+                            enPassant = false;
+                            continue;
+                        }
+
                     if (!BoardGrid.Instance.HasAnyPieceOnGridPosition(testGridPosition)) // if check to prevent movement to where another unit already is.
                     {
-                        continue; // exits current for iteration and moves onto the next one.
-                    }
-                    if (z == 0)
-                    {
-                        continue;
+                        if (PieceControlSystem.Instance.GetLastMoved() == null)
+                        {
+                            enPassant = false;
+                            continue;
+                        }
+                        if (PieceControlSystem.Instance.GetLastMoved().GetGridPosition().x != (pieceGridPosition.x + 1) && PieceControlSystem.Instance.GetLastMoved().GetGridPosition().x != (pieceGridPosition.x - 1))
+                        {
+                            enPassant = false;
+                            continue;
+                        }
+                        if (PieceControlSystem.Instance.GetLastMoved().GetGridPosition().z != pieceGridPosition.z)
+                        {
+                            enPassant = false;
+                            continue;
+                        }
+                        if ((PieceControlSystem.Instance.GetLastMoved().GetPieceType() != "Pawn") || PieceControlSystem.Instance.GetLastMoved().IsDark() == piece.IsDark())
+                        {
+                            enPassant = false;
+                            continue;  
+                        }
+                        else
+                        {
+                            if (!PieceControlSystem.Instance.GetLastMoved().GetPieceAction().JustMovedTwo())
+                            {
+                                enPassant = false;
+                                continue;
+                            }
+                            enPassant = true;
+                            Debug.Log("En Passant Line Ran!");
+                        }
+                        //continue; // exits current for iteration and moves onto the next one.
                     }
                     else
                     {
                         Piece targetPiece = BoardGrid.Instance.GetPieceAtGridPosition(testGridPosition);
                         if (piece.IsDark() == targetPiece.IsDark())
                         {
+                            enPassant = false;
                             continue;
                         }
                     }
                 }
 
-                Vector3 gridWorldPosition = BoardGrid.Instance.GetWorldPosition(testGridPosition);
-                Vector3 pieceWorldPosition = BoardGrid.Instance.GetWorldPosition(pieceGridPosition);
+                
 
                 Vector3 moveDirection = (gridWorldPosition - pieceWorldPosition).normalized;
 
@@ -130,50 +180,41 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
                     continue;
                 }
 
-                /*
-
-                bool valid = true;
-                piece.DeactivateCollider();
-                Transform testBox = piece.GetBox();
-                Instantiate(testBox, gridWorldPosition, Quaternion.identity);
-
                 Piece king;
-                List<Piece> enemyPieceList;
-
                 if (piece.IsDark())
                 {
                     king = PieceManager.Instance.GetDarkKing();
-                    enemyPieceList = PieceManager.Instance.GetLightPieceList();
                 }
                 else
                 {
                     king = PieceManager.Instance.GetLightKing();
-                    enemyPieceList = PieceManager.Instance.GetDarkPieceList();
-                }
-                GridPosition kingPos = king.GetGridPosition();
-
-                foreach (Piece enemy in enemyPieceList)
-                {
-                    if (!enemy.GetPieceAction().IsValidKingPosition(kingPos))
-                    {
-                        TestBoxDestroy?.Invoke(this, EventArgs.Empty);
-                        piece.EnableCollider();
-                        valid = false;
-                        continue;
-                    }
                 }
 
-                if (!valid)
+                //Transform testBox = PieceControlSystem.Instance.GetBox();
+                
+
+                if (king.IsThreatened(testGridPosition))
                 {
-                    TestBoxDestroy?.Invoke(this, EventArgs.Empty);
-                    piece.EnableCollider();
                     continue;
                 }
-                
-                piece.EnableCollider();
-                TestBoxDestroy?.Invoke(this, EventArgs.Empty);
-                */
+
                 validGridPositionList.Add(testGridPosition);
+                if (movingTwo)
+                {
+                    justMovedTwo = true;
+                }
+                else
+                {
+                    justMovedTwo = false;
+                }
+                if (enPassant)
+                {
+                    enPass = true;
+                }
+                else
+                {
+                    enPass = false;
+                }
             }
         }
         TestBoxDestroy?.Invoke(this, EventArgs.Empty);
@@ -184,6 +225,10 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
     {
         hasMoved = true;
         TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+        if (enPass)
+        {
+            PieceControlSystem.Instance.GetLastMoved().Die();
+        }
     }
 
     public override bool IsValidKingPosition(GridPosition gridPosition)
@@ -212,5 +257,10 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
             }
         }
         return true;
+    }
+
+    public override bool JustMovedTwo()
+    {
+        return justMovedTwo;
     }
 }

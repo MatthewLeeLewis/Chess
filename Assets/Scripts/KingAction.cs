@@ -106,7 +106,37 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                 {
                     continue;
                 }*/
-            
+
+                //************************************
+
+                /*
+                float heightDisplacement = 0.6f;
+                GridPosition eastPosOffset = new GridPosition(1, 0);
+                GridPosition eastPos_grid = gridPosition + eastPosOffset;
+                Vector3 eastPos = BoardGrid.Instance.GetWorldPosition(eastPos_grid);
+                
+                Vector3 east = (eastPos - pieceWorldPosition).normalized;
+                if (Physics.Raycast(
+                        pieceWorldPosition + Vector3.up * heightDisplacement,
+                        east,
+                        out RaycastHit eastHit,
+                        32f,
+                        piecesLayerMask))
+                {
+                    if (eastHit.transform.TryGetComponent<Piece>(out Piece hitPiece)))
+                    {
+                        if (hitPiece.GetPieceType() != "Rook" || hitPiece.IsDark() != pieceGridPosition.isDark())
+                        {
+                            continue;
+                        }
+                    }
+                }*/
+                
+                
+                if (BoardGrid.Instance.IsThreatened(testGridPosition, piece.IsDark()))
+                {
+                    continue;
+                }
 
                 validGridPositionList.Add(testGridPosition);
             }

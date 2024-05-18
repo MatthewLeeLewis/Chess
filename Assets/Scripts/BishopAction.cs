@@ -75,6 +75,23 @@ public class BishopAction : PieceAction // By making the base class abstract, in
                     // Blocked by another piece.
                     continue;
                 }
+/*
+                Piece king;
+                if (piece.IsDark())
+                {
+                    king = PieceManager.Instance.GetDarkKing();
+                }
+                else
+                {
+                    king = PieceManager.Instance.GetLightKing();
+                }
+
+                //PieceControlSystem.Instance.MoveBox(gridWorldPosition);
+                
+                if (king.IsThreatened(testGridPosition))
+                {
+                    continue;
+                }*/
 
                 validGridPositionList.Add(testGridPosition);
             }

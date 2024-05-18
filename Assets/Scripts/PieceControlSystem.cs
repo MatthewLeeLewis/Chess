@@ -22,7 +22,9 @@ public class PieceControlSystem : MonoBehaviour
     [SerializeField] private LayerMask piecesLayerMask; // This is the pieces layer variable.
 
     private PieceAction selectedPieceAction;
+    [SerializeField] private Piece lastMoved;
     private bool isBusy; // Variable to track whether the control system is currently doing something or not.
+    [SerializeField] private TestBox testBox;
 
     private void Awake() 
     {
@@ -77,41 +79,43 @@ public class PieceControlSystem : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             GridPosition mouseGridPosition = BoardGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+            
 
             if (selectedPiece.GetPieceType() != "King")
             {
+                Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
                 if (selectedPiece.IsDark())
                 {
+                    
                     if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
                     {
                         Transform testBox = selectedPiece.GetBox();
-                        Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
-                        if (!PieceManager.Instance.GetDarkKing().IsThreatened(mouseGridPosition))
-                        {
+                        
+                        //if (!PieceManager.Instance.GetDarkKing().IsThreatened(mouseGridPosition))
+                        //{
                             SetBusy();
                             selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
                             OnActionStarted?.Invoke(this, EventArgs.Empty);
-                            TurnSystem.Instance.NextTurn();
-                        }
+                            
+                        //}
                     }
                 }
                 else
                 {
                     if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
                     {
-                        Transform testBox = selectedPiece.GetBox();
-                        Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
-                        if (!PieceManager.Instance.GetLightKing().IsThreatened(mouseGridPosition))
-                        {
+                        //Transform testBox = selectedPiece.GetBox();
+                       // Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
+                        //if (!PieceManager.Instance.GetLightKing().IsThreatened(mouseGridPosition))
+                        //{
                             SetBusy();
                             selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
                             OnActionStarted?.Invoke(this, EventArgs.Empty);
-                            TurnSystem.Instance.NextTurn();
-                        }
+                        //}
                     }
                 }
                 Invoke("TestBoxDestruction", 1f);
-                TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+                //TestBoxDestroy?.Invoke(this, EventArgs.Empty);
             }
             else if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
             {
@@ -120,15 +124,14 @@ public class PieceControlSystem : MonoBehaviour
                     SetBusy();
                     selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
                     OnActionStarted?.Invoke(this, EventArgs.Empty);
-                    TurnSystem.Instance.NextTurn();
                 }
                 Invoke("TestBoxDestruction", 1f);
-                TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+                //TestBoxDestroy?.Invoke(this, EventArgs.Empty);
             }
         }
     }
 
-    private void TestBoxDestruction()
+    public void TestBoxDestruction()
     {
         TestBoxDestroy?.Invoke(this, EventArgs.Empty);
     }
@@ -142,7 +145,7 @@ public class PieceControlSystem : MonoBehaviour
 
     private void ClearBusy()
     {
-        isBusy = false;
+        //isBusy = false;
         //OnBusyChanged?.Invoke(this, isBusy);
         OnBusyChanged?.Invoke(this, EventArgs.Empty);
 
@@ -156,6 +159,29 @@ public class PieceControlSystem : MonoBehaviour
                 pieceList[i].Die();
             }
         }
+
+        lastMoved = selectedPiece;
+
+        if (TurnSystem.Instance.IsDarkTurn())
+        {
+            SetSelectedPiece(PieceManager.Instance.GetLightKing());
+        }
+        else
+        {
+            SetSelectedPiece(PieceManager.Instance.GetDarkKing());
+        }
+
+        //MoveBox(new Vector3(-1, 0, -1));
+        TestBoxDestruction();
+
+        Invoke("NextTurn", 0.1f);
+        //TurnSystem.Instance.NextTurn();
+    }
+
+    private void NextTurn()
+    {
+        isBusy = false;
+        TurnSystem.Instance.NextTurn();
     }
 
     private bool TryHandlePieceSelection() // Custom method to try to select a piece, and return whether it was successful or not.
@@ -218,6 +244,16 @@ public class PieceControlSystem : MonoBehaviour
     public bool IsBusy()
     {
         return isBusy;
+    }
+
+    public TestBox GetBox()
+    {
+        return testBox;
+    }
+
+    public Piece GetLastMoved()
+    {
+        return lastMoved;
     }
 
 }

@@ -75,6 +75,24 @@ public class RookAction : PieceAction // By making the base class abstract, inst
                     // Blocked by another piece.
                     continue;
                 }
+/*
+                Piece king;
+                if (piece.IsDark())
+                {
+                    king = PieceManager.Instance.GetDarkKing();
+                }
+                else
+                {
+                    king = PieceManager.Instance.GetLightKing();
+                }
+
+                //PieceControlSystem.Instance.MoveBox(gridWorldPosition);
+                
+                
+                if (king.IsThreatened(testGridPosition))
+                {
+                    continue;
+                }*/
 
                 validGridPositionList.Add(testGridPosition);
             }

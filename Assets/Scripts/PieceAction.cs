@@ -49,4 +49,9 @@ public abstract class PieceAction : MonoBehaviour // By making the base class ab
         isActive = false;
         onActionComplete();
     }
+
+    public virtual bool JustMovedTwo()
+    {
+        return false;
+    }
 }
