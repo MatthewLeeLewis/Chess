@@ -7,6 +7,19 @@ public class RookAction : PieceAction // By making the base class abstract, inst
 {
     public event EventHandler OnStopMoving;
     [SerializeField] private LayerMask piecesLayerMask;
+    private bool hasMoved = false;
+    private PieceAction pieceAction;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        pieceAction = this;
+    }
+
+    private void Start()
+    {
+        pieceAction.OnStartMoving += PieceAction_OnStartMoving;
+    }
 
     private void Update()
     {
@@ -104,5 +117,20 @@ public class RookAction : PieceAction // By making the base class abstract, inst
     public override bool IsValidKingPosition(GridPosition gridPosition)
     {
         return (!GetValidActionGridPositionList().Contains(gridPosition));
+    }
+
+    private void PieceAction_OnStartMoving(object sender, EventArgs e)
+    {
+        hasMoved = true;
+    }
+
+    public override bool HasMoved()
+    {
+        return hasMoved;
+    }
+
+    public override void SetHasMoved()
+    {
+        hasMoved = true;
     }
 }

@@ -25,6 +25,7 @@ public class PieceControlSystem : MonoBehaviour
     [SerializeField] private Piece lastMoved;
     private bool isBusy; // Variable to track whether the control system is currently doing something or not.
     [SerializeField] private TestBox testBox;
+    private bool promptActive = false;
 
     private void Awake() 
     {
@@ -49,6 +50,11 @@ public class PieceControlSystem : MonoBehaviour
             return;
         }
 
+        if (promptActive)
+        {
+            return;
+        }
+
         /*
         if (!TurnSystem.Instance.IsPlayerTurn())
         {
@@ -62,6 +68,10 @@ public class PieceControlSystem : MonoBehaviour
             return;
         }
         */
+        if (TryCastling())
+        {
+            return;
+        }
 
         if (TryHandlePieceSelection())
         {
@@ -83,21 +93,21 @@ public class PieceControlSystem : MonoBehaviour
 
             if (selectedPiece.GetPieceType() != "King")
             {
-                Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
                 if (selectedPiece.IsDark())
                 {
                     
                     if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
                     {
-                        Transform testBox = selectedPiece.GetBox();
+                        //Transform testBox = selectedPiece.GetBox();
+                        Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
                         
-                        //if (!PieceManager.Instance.GetDarkKing().IsThreatened(mouseGridPosition))
-                        //{
+                        if (!PieceManager.Instance.GetDarkKing().IsThreatened(mouseGridPosition))
+                        {
                             SetBusy();
                             selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
                             OnActionStarted?.Invoke(this, EventArgs.Empty);
                             
-                        //}
+                        }
                     }
                 }
                 else
@@ -105,13 +115,14 @@ public class PieceControlSystem : MonoBehaviour
                     if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
                     {
                         //Transform testBox = selectedPiece.GetBox();
-                       // Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
-                        //if (!PieceManager.Instance.GetLightKing().IsThreatened(mouseGridPosition))
-                        //{
+                        // Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
+                        Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
+                        if (!PieceManager.Instance.GetLightKing().IsThreatened(mouseGridPosition))
+                        {
                             SetBusy();
                             selectedPieceAction.TakeAction(mouseGridPosition, ClearBusy);
                             OnActionStarted?.Invoke(this, EventArgs.Empty);
-                        //}
+                        }
                     }
                 }
                 Invoke("TestBoxDestruction", 1f);
@@ -145,8 +156,6 @@ public class PieceControlSystem : MonoBehaviour
 
     private void ClearBusy()
     {
-        //isBusy = false;
-        //OnBusyChanged?.Invoke(this, isBusy);
         OnBusyChanged?.Invoke(this, EventArgs.Empty);
 
         GridPosition gridPosition = selectedPiece.GetGridPosition();
@@ -162,6 +171,18 @@ public class PieceControlSystem : MonoBehaviour
 
         lastMoved = selectedPiece;
 
+        int pawnPromotionGridZ = 7;
+        if (TurnSystem.Instance.IsDarkTurn())
+        {
+            pawnPromotionGridZ = 0;
+        }
+
+        if (selectedPiece.GetPieceType() == "Pawn" && selectedPiece.GetGridPosition().z == pawnPromotionGridZ)
+        {
+            promptActive = true;
+            PawnPromotionMenu.Instance.Show();
+        }
+
         if (TurnSystem.Instance.IsDarkTurn())
         {
             SetSelectedPiece(PieceManager.Instance.GetLightKing());
@@ -171,15 +192,18 @@ public class PieceControlSystem : MonoBehaviour
             SetSelectedPiece(PieceManager.Instance.GetDarkKing());
         }
 
-        //MoveBox(new Vector3(-1, 0, -1));
         TestBoxDestruction();
 
         Invoke("NextTurn", 0.1f);
-        //TurnSystem.Instance.NextTurn();
     }
 
     private void NextTurn()
     {
+        if (promptActive)
+        {
+            Invoke("NextTurn", 0.1f);
+            return;
+        }
         isBusy = false;
         TurnSystem.Instance.NextTurn();
     }
@@ -213,7 +237,48 @@ public class PieceControlSystem : MonoBehaviour
         return false;
     }
 
-    private void SetSelectedPiece(Piece piece) // Simple method to change the selected piece and trigger the event for if a selected piece was changed.
+    private bool TryCastling()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Instantiate a laser to determine mouse position.
+            if (Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue, piecesLayerMask)) // If it hits a piece (specifically an object on the pieces layer)...
+            {
+                if (raycastHit.transform.TryGetComponent<Piece>(out Piece piece)) // Check if the hit object is a piece...
+                {
+                    if (piece.GetPieceType() == "Rook" && piece.IsDark() == TurnSystem.Instance.IsDarkTurn())
+                    {
+                        if (selectedPiece.GetPieceType() == "King" && selectedPiece.IsDark() == TurnSystem.Instance.IsDarkTurn())
+                        {
+                            if (!selectedPieceAction.HasMoved() && !piece.GetPieceAction().HasMoved())
+                            {
+                                Vector3 rookWorldPosition = selectedPiece.GetWorldPosition();
+                                Vector3 kingWorldPosition = piece.GetWorldPosition();
+
+                                Vector3 moveDirection = (rookWorldPosition - kingWorldPosition).normalized;
+
+                                float heightDisplacement = 0.6f;
+                                if (!Physics.Raycast(
+                                    kingWorldPosition + Vector3.up * heightDisplacement,
+                                    moveDirection,
+                                    (Vector3.Distance(kingWorldPosition, rookWorldPosition)) - 2f,
+                                    piecesLayerMask))
+                                    {
+                                        CastlingMenu.Instance.SetRook(piece);
+                                        CastlingMenu.Instance.Show();
+                                        promptActive = true;
+                                        return true;
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public void SetSelectedPiece(Piece piece) // Simple method to change the selected piece and trigger the event for if a selected piece was changed.
     {
         if (selectedPiece != null)
         {
@@ -254,6 +319,16 @@ public class PieceControlSystem : MonoBehaviour
     public Piece GetLastMoved()
     {
         return lastMoved;
+    }
+
+    public void SetLastMoved(Piece piece)
+    {
+        lastMoved = piece;
+    }
+
+    public void StopPrompt()
+    {
+        promptActive = false;
     }
 
 }

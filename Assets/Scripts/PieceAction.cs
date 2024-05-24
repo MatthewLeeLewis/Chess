@@ -54,4 +54,11 @@ public abstract class PieceAction : MonoBehaviour // By making the base class ab
     {
         return false;
     }
+
+    public virtual bool HasMoved()
+    {
+        return true;
+    }
+
+    public virtual void SetHasMoved(){}
 }

@@ -179,7 +179,7 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
                     // Blocked by another piece.
                     continue;
                 }
-
+/*
                 Piece king;
                 if (piece.IsDark())
                 {
@@ -196,7 +196,7 @@ public class PawnAction : PieceAction // By making the base class abstract, inst
                 if (king.IsThreatened(testGridPosition))
                 {
                     continue;
-                }
+                }*/
 
                 validGridPositionList.Add(testGridPosition);
                 if (movingTwo)
