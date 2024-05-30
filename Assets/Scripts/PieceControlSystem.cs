@@ -55,6 +55,11 @@ public class PieceControlSystem : MonoBehaviour
             return;
         }
 
+        if (TurnSystem.Instance.IsAITurn())
+        {
+            return;
+        }
+
         /*
         if (!TurnSystem.Instance.IsPlayerTurn())
         {

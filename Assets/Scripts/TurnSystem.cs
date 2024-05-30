@@ -10,6 +10,8 @@ public class TurnSystem : MonoBehaviour
 
     private int turnNumber = 1;
     private bool isDarkTurn = false;
+    [SerializeField] private bool lightIsAI = false;
+    [SerializeField] private bool darkIsAI = false;
     
     private void Awake() 
     {
@@ -38,5 +40,17 @@ public class TurnSystem : MonoBehaviour
     public bool IsDarkTurn()
     {
         return isDarkTurn;
+    }
+
+    public bool IsAITurn()
+    {
+        if (isDarkTurn)
+        {
+            return darkIsAI;
+        }
+        else
+        {
+            return lightIsAI;
+        }
     }
 }

@@ -63,8 +63,6 @@ public class UICanvas : MonoBehaviour
 
     private bool CheckCheckmate(bool isDarkCheck)
     {
-        
-
         if (isDarkCheck)
         {
             GridPosition threatPos = PieceControlSystem.Instance.GetLastMoved().GetGridPosition();
@@ -301,7 +299,6 @@ public class UICanvas : MonoBehaviour
                                 {
                                     if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
                                     {
-                                        Debug.Log("False Return Here!");
                                         return false;
                                     }
                                 }
@@ -327,7 +324,49 @@ public class UICanvas : MonoBehaviour
                                 }
                             }
                         }
-                        
+                        else if (gridPosition.z + gridPosition.x == kingPos.z + kingPos.x) 
+                        {
+                            if (kingPos.x > threatPos.x && kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x && kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x && kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x > threatPos.x && kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

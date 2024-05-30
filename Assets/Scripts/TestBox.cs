@@ -8,6 +8,7 @@ public class TestBox : MonoBehaviour
     private void Start()
     {
         PieceControlSystem.TestBoxDestroy += TestBoxDestroy;
+        AI_system.TestBoxDestroy += TestBoxDestroy;
     }
 
     public void Move(Vector3 newPosition)
@@ -23,5 +24,6 @@ public class TestBox : MonoBehaviour
     private void OnDestroy()
     {
         PieceControlSystem.TestBoxDestroy -= TestBoxDestroy;
+        AI_system.TestBoxDestroy -= TestBoxDestroy;
     }
 }
