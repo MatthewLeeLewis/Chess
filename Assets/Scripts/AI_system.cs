@@ -15,6 +15,7 @@ public class AI_system : MonoBehaviour
         TakingTurn,
         Action,
         Busy,
+        GiveUp
     }
 
     private State state;
@@ -77,6 +78,8 @@ public class AI_system : MonoBehaviour
                 }
                 break;
             case State.Busy:
+                break;
+            case State.GiveUp:
                 break;
         }
     }
@@ -237,5 +240,10 @@ public class AI_system : MonoBehaviour
     public void TestBoxDestruction()
     {
         TestBoxDestroy?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void GiveUp()
+    {
+        state = State.GiveUp;
     }
 }

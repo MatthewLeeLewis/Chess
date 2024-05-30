@@ -12,6 +12,7 @@ public class Piece : MonoBehaviour
     public static event EventHandler OnAnyPieceDead;
     public static event EventHandler OnAnyPieceSpawned;
     [SerializeField] private LayerMask piecesLayerMask;  
+    [SerializeField] private int relativePower;
 
     private enum PieceType 
     {
@@ -651,6 +652,11 @@ public class Piece : MonoBehaviour
         }
         
         return false;
+    }
+
+    public int GetPower()
+    {
+        return relativePower;
     }
 }
 

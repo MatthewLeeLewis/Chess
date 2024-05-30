@@ -50,6 +50,7 @@ MonoBehaviour:
   piecesLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  relativePower: 10
   isDark: 0
   testBox: {fileID: 1812778518072447788, guid: 754f6698af034e24e9c7827aec1b21e4, type: 3}
   boxCollider: {fileID: 8140784496550172142}
@@ -90,6 +91,8 @@ MonoBehaviour:
   piecesLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  enPass: 0
+  justMovedTwo: 0
 --- !u!1001 &3132215309788577230
 PrefabInstance:
   m_ObjectHideFlags: 0
