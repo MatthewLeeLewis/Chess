@@ -5,6 +5,7 @@ public struct GridPosition : IEquatable<GridPosition>
 {
     public int x;
     public int z;
+    public int value;
 
     public GridPosition(int x, int z) // Constructor for the struct.
     {
