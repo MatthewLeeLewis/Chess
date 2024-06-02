@@ -64,10 +64,6 @@ PrefabInstance:
       propertyPath: testBox
       value: 
       objectReference: {fileID: 694803291015539352, guid: 5c5059b24b89a6f43a2f75d90d9af4a9, type: 3}
-    - target: {fileID: 6098285519977856372, guid: 16c0ad880c3962a44a47b0f49d771a62, type: 3}
-      propertyPath: relativePower
-      value: -900
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

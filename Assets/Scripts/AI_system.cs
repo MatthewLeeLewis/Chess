@@ -98,9 +98,19 @@ public class AI_system : MonoBehaviour
             pieceList = PieceManager.Instance.GetLightPieceList();
         }
         
+        /*
         selectedPiece = pieceList[UnityEngine.Random.Range(0, pieceList.Count - 1)];
         selectedPieceAction = selectedPiece.GetPieceAction();
         PieceControlSystem.Instance.SetSelectedPiece(selectedPiece);
+        */
+        for (int i = 0; i < pieceList.Count; i++)
+        {
+            selectedPiece = pieceList[i];
+            selectedPieceAction = selectedPiece.GetPieceAction();
+            PieceControlSystem.Instance.SetSelectedPiece(selectedPiece);
+
+            
+        }
 
         validPositions = selectedPieceAction.GetValidActionGridPositionList();
         if (validPositions.Count > 0)

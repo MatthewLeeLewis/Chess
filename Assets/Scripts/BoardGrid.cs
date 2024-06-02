@@ -614,4 +614,211 @@ public class BoardGrid : MonoBehaviour
         Debug.Log("movement allowed.");
         return false;
     }
+
+    public float GetPositionValue(GridPosition targetPosition)
+    {
+        Piece targetPiece;
+        Piece selectedPiece = PieceControlSystem.Instance.GetSelectedPiece();
+
+        GridPosition targetPosCoord = targetPosition;
+        GridPosition currentGridPosCoord = selectedPiece.GetGridPosition();
+
+        if (!TurnSystem.Instance.IsDarkTurn())
+        {
+            switch (targetPosition.z)
+            {
+                case 0:
+                    {
+                        targetPosCoord.z = 7;
+                        break;
+                    }
+                case 1:
+                    {
+                        targetPosCoord.z = 6;
+                        break;
+                    }
+                case 2:
+                    {
+                        targetPosCoord.z = 5;
+                        break;
+                    }
+                case 3:
+                    {
+                        targetPosCoord.z = 4;
+                        break;
+                    }
+                case 4:
+                    {
+                        targetPosCoord.z = 3;
+                        break;
+                    }
+                case 5:
+                    {
+                        targetPosCoord.z = 2;
+                        break;
+                    }
+                case 6:
+                    {
+                        targetPosCoord.z = 1;
+                        break;
+                    }
+                case 7:
+                    {
+                        targetPosCoord.z = 0;
+                        break;
+                    }
+            }
+            switch (targetPosition.x)
+            {
+                case 0:
+                    {
+                        targetPosCoord.x = 7;
+                        break;
+                    }
+                case 1:
+                    {
+                        targetPosCoord.x = 6;
+                        break;
+                    }
+                case 2:
+                    {
+                        targetPosCoord.x = 5;
+                        break;
+                    }
+                case 3:
+                    {
+                        targetPosCoord.x = 4;
+                        break;
+                    }
+                case 4:
+                    {
+                        targetPosCoord.x = 3;
+                        break;
+                    }
+                case 5:
+                    {
+                        targetPosCoord.x = 2;
+                        break;
+                    }
+                case 6:
+                    {
+                        targetPosCoord.x = 1;
+                        break;
+                    }
+                case 7:
+                    {
+                        targetPosCoord.x = 0;
+                        break;
+                    }
+            }
+            switch (selectedPiece.GetGridPosition().z)
+            {
+                case 0:
+                    {
+                        currentGridPosCoord.z = 7;
+                        break;
+                    }
+                case 1:
+                    {
+                        currentGridPosCoord.z = 6;
+                        break;
+                    }
+                case 2:
+                    {
+                        currentGridPosCoord.z = 5;
+                        break;
+                    }
+                case 3:
+                    {
+                        currentGridPosCoord.z = 4;
+                        break;
+                    }
+                case 4:
+                    {
+                        currentGridPosCoord.z = 3;
+                        break;
+                    }
+                case 5:
+                    {
+                        currentGridPosCoord.z = 2;
+                        break;
+                    }
+                case 6:
+                    {
+                        currentGridPosCoord.z = 1;
+                        break;
+                    }
+                case 7:
+                    {
+                        currentGridPosCoord.z = 0;
+                        break;
+                    }
+            }
+            switch (selectedPiece.GetGridPosition().x)
+            {
+                case 0:
+                    {
+                        currentGridPosCoord.x = 7;
+                        break;
+                    }
+                case 1:
+                    {
+                        currentGridPosCoord.x = 6;
+                        break;
+                    }
+                case 2:
+                    {
+                        currentGridPosCoord.x = 5;
+                        break;
+                    }
+                case 3:
+                    {
+                        currentGridPosCoord.x = 4;
+                        break;
+                    }
+                case 4:
+                    {
+                        currentGridPosCoord.x = 3;
+                        break;
+                    }
+                case 5:
+                    {
+                        currentGridPosCoord.x = 2;
+                        break;
+                    }
+                case 6:
+                    {
+                        currentGridPosCoord.x = 1;
+                        break;
+                    }
+                case 7:
+                    {
+                        currentGridPosCoord.x = 0;
+                        break;
+                    }
+            }
+        }
+
+        float targetPieceValue = 0f;
+        if (HasAnyPieceOnGridPosition(targetPosition))
+        {
+            targetPiece = GetPieceAtGridPosition(targetPosition);
+            targetPieceValue = targetPiece.GetComponent<PieceValue>().GetPower(targetPosition);
+        }
+
+        float currentThreatValue = selectedPiece.GetComponent<PieceValue>().GetPower(currentGridPosCoord);
+        if (selectedPiece.IsThreatened(selectedPiece.GetGridPosition()))
+        {
+            currentThreatValue -= selectedPiece.GetRelativePower();
+        }
+
+        float targetThreatValue = selectedPiece.GetComponent<PieceValue>().GetPower(targetPosCoord);
+        if (IsThreatened(targetPosition, TurnSystem.Instance.IsDarkTurn()))
+        {
+            targetThreatValue -= selectedPiece.GetRelativePower();
+        }
+
+        return (targetPieceValue + targetThreatValue - currentThreatValue); 
+    }
+        
 }
