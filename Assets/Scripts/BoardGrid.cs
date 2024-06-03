@@ -807,13 +807,13 @@ public class BoardGrid : MonoBehaviour
         }
 
         float currentThreatValue = selectedPiece.GetComponent<PieceValue>().GetPower(currentGridPosCoord);
-        if (selectedPiece.IsThreatened(selectedPiece.GetGridPosition()))
+        if (selectedPiece.IsThreatened(selectedPiece.GetGridPosition()) && selectedPiece.GetPieceType() != "King")
         {
             currentThreatValue -= selectedPiece.GetRelativePower();
         }
 
         float targetThreatValue = selectedPiece.GetComponent<PieceValue>().GetPower(targetPosCoord);
-        if (IsThreatened(targetPosition, TurnSystem.Instance.IsDarkTurn()))
+        if (IsThreatened(targetPosition, TurnSystem.Instance.IsDarkTurn()) && selectedPiece.GetPieceType() != "King")
         {
             targetThreatValue -= selectedPiece.GetRelativePower();
         }

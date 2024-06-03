@@ -1,14 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
 
 public class AI_system : MonoBehaviour
 {
+    public static AI_system Instance { get; private set; } // This ensures that the instance of this object can be gotten publicly but cannot be set publicly.
     public static event EventHandler TestBoxDestroy;
     [SerializeField] private Transform darkQueenPrefab;
     [SerializeField] private Transform queenPrefab;
     [SerializeField] private TestBox testBox;
+
+    List<float> positionValues;
+    Dictionary<float, Piece> actionsByValues;
+    Dictionary<float, GridPosition> positionsByValues;
+
     private enum State
     {
         WaitingForAITurn,
@@ -26,7 +34,18 @@ public class AI_system : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null) // This if check ensures that multiple instances of this object do not exist and reports it if they do, and destroys the duplicate.
+        {
+            Debug.LogError("There's more than one AI_system! " + transform + " - " + Instance);
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this; // This instantiates the instance.
         state = State.WaitingForAITurn;
+
+        positionValues = new List<float>(); 
+        actionsByValues = new Dictionary<float, Piece>();
+        positionsByValues = new Dictionary<float, GridPosition>();
     }
 
     private void Start() 
@@ -66,10 +85,59 @@ public class AI_system : MonoBehaviour
                 timer -= Time.deltaTime;
                 if (timer <= 0f)
                 {
-                    if (!TryInitiateAction())
+                    if (positionValues.Count > 1)
+                    {
+                        positionValues.Sort();
+                        positionValues.Reverse();
+
+                        SetSelection();
+                    }
+                    else
                     {
                         timer = 1f;
                         state = State.TakingTurn;
+                    }
+
+                    if (!TryInitiateAction())
+                    {
+
+                        
+                        if (positionValues.Count > 1)
+                        {
+                            positionValues.RemoveAt(0);
+                            positionValues.Sort();
+                            positionValues.Reverse();
+                            SetSelection();
+                        }
+                        else
+                        {
+                            timer = 1f;
+                            state = State.TakingTurn;
+                        }
+
+                        for (int i = 0; i < positionValues.Count; i ++)
+                        {
+                            if (!TryInitiateAction())
+                            {
+                                
+                                if (positionValues.Count > 1)
+                                {
+                                    positionValues.RemoveAt(0);
+                                    positionValues.Sort();
+                                    positionValues.Reverse();
+                                    SetSelection();
+                                }
+                                else
+                                {
+                                    timer = 1f;
+                                    state = State.TakingTurn;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
                     }
                     else
                     {
@@ -87,15 +155,19 @@ public class AI_system : MonoBehaviour
     private void CalculateAIAction()
     {
         List<Piece> pieceList;
-        List<GridPosition> validPositions;
+        List<GridPosition> validPositions; 
+
+        positionValues.Clear();
+        actionsByValues.Clear();
+        positionsByValues.Clear();
 
         if (TurnSystem.Instance.IsDarkTurn())
         {
-            pieceList = PieceManager.Instance.GetDarkPieceList();
+            pieceList = PieceManager.Instance.GetDarkPieceList().OrderBy(x => UnityEngine.Random.value).ToList();
         }
         else
         {
-            pieceList = PieceManager.Instance.GetLightPieceList();
+            pieceList = PieceManager.Instance.GetLightPieceList().OrderBy(x => UnityEngine.Random.value).ToList();
         }
         
         /*
@@ -109,10 +181,23 @@ public class AI_system : MonoBehaviour
             selectedPieceAction = selectedPiece.GetPieceAction();
             PieceControlSystem.Instance.SetSelectedPiece(selectedPiece);
 
+            validPositions = selectedPieceAction.GetValidActionGridPositionList();
             
+            
+            for (int j = 0; j < validPositions.Count; j++)
+            {
+                
+                float positionValue = BoardGrid.Instance.GetPositionValue(validPositions[j]);
+                if (!positionValues.Contains(positionValue))
+                {
+                    positionValues.Add(positionValue);
+                    positionsByValues.Add(positionValue, validPositions[j]);
+                    actionsByValues.Add(positionValue, selectedPiece);
+                }
+            }
         }
 
-        validPositions = selectedPieceAction.GetValidActionGridPositionList();
+        /*
         if (validPositions.Count > 0)
         {
             targetPosition = validPositions[UnityEngine.Random.Range(0, validPositions.Count - 1)];
@@ -120,7 +205,7 @@ public class AI_system : MonoBehaviour
         else
         {
             CalculateAIAction();
-        }
+        }*/
         
 
         //selectedPiece.GetPieceAction().TakeAction(targetPosition, ClearBusy);
@@ -255,5 +340,13 @@ public class AI_system : MonoBehaviour
     public void GiveUp()
     {
         state = State.GiveUp;
+    }
+
+    private void SetSelection()
+    {
+        selectedPiece = actionsByValues[positionValues[0]];
+        selectedPieceAction = selectedPiece.GetPieceAction();
+        PieceControlSystem.Instance.SetSelectedPiece(selectedPiece);
+        targetPosition = positionsByValues[positionValues[0]];
     }
 }

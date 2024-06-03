@@ -31,6 +31,7 @@ public class UICanvas : MonoBehaviour
                 if (CheckCheckmate(true))
                 {
                     checkText.text = "CHECKMATE!";
+                    AI_system.Instance.GiveUp();
                 }
                 Invoke("EnableThreatCollider", 1f);
 
@@ -51,6 +52,7 @@ public class UICanvas : MonoBehaviour
                 if (CheckCheckmate(false))
                 {
                     checkText.text = "CHECKMATE!";
+                    AI_system.Instance.GiveUp();
                 }
                 Invoke("EnableThreatCollider", 1f);
             }
