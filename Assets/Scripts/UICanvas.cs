@@ -7,10 +7,20 @@ using TMPro;
 
 public class UICanvas : MonoBehaviour
 {
+    public static UICanvas Instance { get; private set; } // This ensures that the instance of this object can be gotten publicly but cannot be set publicly.
     [SerializeField] private TextMeshProUGUI turnText;
     [SerializeField] private TextMeshProUGUI checkText;
+    private bool isInCheck = false;
+
     private void Awake()
     {
+        if (Instance != null) // This if check ensures that multiple instances of this object do not exist and reports it if they do, and destroys the duplicate.
+        {
+            Debug.LogError("There's more than one UICanvas! " + transform + " - " + Instance);
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this; // This instantiates the instance.
         checkText.enabled = false;
     }
     void Start()
@@ -27,6 +37,7 @@ public class UICanvas : MonoBehaviour
             GridPosition gridPosition = PieceManager.Instance.GetDarkKing().GetGridPosition();
             if (PieceManager.Instance.GetDarkKing().IsThreatened(gridPosition))
             {
+                isInCheck = true;
                 checkText.enabled = true;
                 if (CheckCheckmate(true))
                 {
@@ -38,6 +49,7 @@ public class UICanvas : MonoBehaviour
             }
             else
             {
+                isInCheck = false;
                 checkText.enabled = false;
             }
         }
@@ -48,6 +60,7 @@ public class UICanvas : MonoBehaviour
             GridPosition gridPosition = PieceManager.Instance.GetLightKing().GetGridPosition();
             if (PieceManager.Instance.GetLightKing().IsThreatened(gridPosition))
             {
+                isInCheck = true;
                 checkText.enabled = true;
                 if (CheckCheckmate(false))
                 {
@@ -58,6 +71,7 @@ public class UICanvas : MonoBehaviour
             }
             else
             {
+                isInCheck = false;
                 checkText.enabled = false;
             }
         }
@@ -379,5 +393,10 @@ public class UICanvas : MonoBehaviour
     private void EnableThreatCollider()
     {
         PieceControlSystem.Instance.GetLastMoved().EnableCollider();
+    }
+
+    public bool IsInCheck()
+    {
+        return isInCheck;
     }
 }

@@ -22,7 +22,7 @@ public class BoardGrid : MonoBehaviour
         Instance = this; // This instantiates the instance.
 
         gridSystem = new GridSystem(8, 8, 2f); // Creates a standard chessboard.
-        gridSystem.CreateDebugObjects(gridDebugObjectPrefab); // Create the prefab Debug objects into the grid system.
+        //gridSystem.CreateDebugObjects(gridDebugObjectPrefab); // Create the prefab Debug objects into the grid system.
     }
 
     public void AddPieceAtGridPosition(GridPosition gridPosition, Piece piece) // Place a piece at a specific grid position
@@ -620,6 +620,12 @@ public class BoardGrid : MonoBehaviour
         Piece targetPiece;
         Piece selectedPiece = PieceControlSystem.Instance.GetSelectedPiece();
 
+        float discouragementValue = 0f;
+        if (selectedPiece.GetPieceType() == "King" && !UICanvas.Instance.IsInCheck())
+        {
+            discouragementValue = 900f;
+        }
+
         GridPosition targetPosCoord = targetPosition;
         GridPosition currentGridPosCoord = selectedPiece.GetGridPosition();
 
@@ -806,19 +812,57 @@ public class BoardGrid : MonoBehaviour
             targetPieceValue = targetPiece.GetComponent<PieceValue>().GetPower(targetPosition);
         }
 
-        float currentThreatValue = selectedPiece.GetComponent<PieceValue>().GetPower(currentGridPosCoord);
-        if (selectedPiece.IsThreatened(selectedPiece.GetGridPosition()) && selectedPiece.GetPieceType() != "King")
+        float currentValue = selectedPiece.GetComponent<PieceValue>().GetPower(currentGridPosCoord);
+        if (selectedPiece.IsThreatened(selectedPiece.GetGridPosition()))
         {
-            currentThreatValue -= selectedPiece.GetRelativePower();
+            currentValue -= selectedPiece.GetRelativePower();
         }
 
-        float targetThreatValue = selectedPiece.GetComponent<PieceValue>().GetPower(targetPosCoord);
-        if (IsThreatened(targetPosition, TurnSystem.Instance.IsDarkTurn()) && selectedPiece.GetPieceType() != "King")
+        float targetValue = selectedPiece.GetComponent<PieceValue>().GetPower(targetPosCoord);
+        if (IsThreatened(targetPosition, TurnSystem.Instance.IsDarkTurn()))
         {
-            targetThreatValue -= selectedPiece.GetRelativePower();
+            targetValue -= selectedPiece.GetRelativePower();
         }
 
-        return (targetPieceValue + targetThreatValue - currentThreatValue); 
+        float vulnerabilityValue = 0f;
+        List<Piece> allyPieceList;
+        if (TurnSystem.Instance.IsDarkTurn())
+        {
+            allyPieceList = PieceManager.Instance.GetDarkPieceList();
+        }
+        else
+        {
+            allyPieceList = PieceManager.Instance.GetLightPieceList();
+        }
+        foreach (Piece piece in allyPieceList)
+        {
+            if (piece != selectedPiece && piece.IsThreatened(targetPosition))
+            {
+                vulnerabilityValue += piece.GetRelativePower();
+            }
+        }
+
+        float threatValue = 0f;
+        if (selectedPiece.GetPieceType() != "King" && !IsThreatened(targetPosition, TurnSystem.Instance.IsDarkTurn()))
+        {
+            List<GridPosition> newActionGridPositionList;
+            
+            newActionGridPositionList = selectedPiece.GetPieceAction().GetTheoreticalActionGridPositionList(targetPosition);
+            
+            foreach (GridPosition gridPosition in newActionGridPositionList)
+            {
+                if (HasAnyPieceOnGridPosition(gridPosition))
+                {
+                    Piece testPiece = GetPieceAtGridPosition(gridPosition);
+                    if (testPiece.IsDark() != selectedPiece.IsDark())
+                    {
+                        threatValue += (testPiece.GetRelativePower() / 10);
+                    }
+                }
+            }
+        }
+
+        return (threatValue + targetPieceValue + targetValue - currentValue - vulnerabilityValue - discouragementValue); 
     }
         
 }

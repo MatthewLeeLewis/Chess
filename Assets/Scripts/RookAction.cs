@@ -114,6 +114,79 @@ public class RookAction : PieceAction // By making the base class abstract, inst
         return validGridPositionList;
     }
 
+    public override List<GridPosition> GetTheoreticalActionGridPositionList(GridPosition gridPosition) // Function to test a unit's move distance against valid grid positions and only return a list of valid positions.
+    {
+        List<GridPosition> validGridPositionList = new List<GridPosition>();
+
+        GridPosition pieceGridPosition = gridPosition;
+
+        for (int x = -8; x <= 8; x++)
+        {
+            for (int z = -8; z <= 8; z++)
+            {
+                GridPosition offsetGridPosition = new GridPosition(x, z);
+                GridPosition testGridPosition = pieceGridPosition + offsetGridPosition;
+
+                if (!BoardGrid.Instance.IsValidGridPosition(testGridPosition)) // if check to prevent movement out of bounds of grid.
+                {
+                    continue; // exits current for iteration and moves onto the next one.
+                }
+
+                if (x != 0 && z != 0)
+                {
+                    continue; // exits current for iteration and moves onto the next one.
+                }
+
+                if (BoardGrid.Instance.HasAnyPieceOnGridPosition(testGridPosition)) // if check to prevent movement to where another unit already is.
+                {
+                    Piece targetPiece = BoardGrid.Instance.GetPieceAtGridPosition(testGridPosition);
+                    if (piece.IsDark() == targetPiece.IsDark())
+                    {
+                        continue;
+                    }
+                }
+
+                Vector3 gridWorldPosition = BoardGrid.Instance.GetWorldPosition(testGridPosition);
+                Vector3 pieceWorldPosition = BoardGrid.Instance.GetWorldPosition(pieceGridPosition);
+
+                Vector3 moveDirection = (gridWorldPosition - pieceWorldPosition).normalized;
+
+                float heightDisplacement = 0.6f;
+                if (Physics.Raycast(
+                    pieceWorldPosition + Vector3.up * heightDisplacement,
+                    moveDirection,
+                    (Vector3.Distance(pieceWorldPosition, gridWorldPosition)) - 2f,
+                    piecesLayerMask))
+                {
+                    // Blocked by another piece.
+                    continue;
+                }
+/*
+                Piece king;
+                if (piece.IsDark())
+                {
+                    king = PieceManager.Instance.GetDarkKing();
+                }
+                else
+                {
+                    king = PieceManager.Instance.GetLightKing();
+                }
+
+                //PieceControlSystem.Instance.MoveBox(gridWorldPosition);
+                
+                
+                if (king.IsThreatened(testGridPosition))
+                {
+                    continue;
+                }*/
+
+                validGridPositionList.Add(testGridPosition);
+            }
+        }
+        
+        return validGridPositionList;
+    }
+
     public override bool IsValidKingPosition(GridPosition gridPosition)
     {
         return (!GetValidActionGridPositionList().Contains(gridPosition));

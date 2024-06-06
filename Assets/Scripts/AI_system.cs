@@ -76,9 +76,19 @@ public class AI_system : MonoBehaviour
                 timer -= Time.deltaTime;
                 if (timer <= 0f)
                 {
-                    CalculateAIAction();
-                    state = State.Action;
-                    timer = 1f;
+                    if (!UICanvas.Instance.IsInCheck())
+                    {
+                        CalculateAIAction();
+                        state = State.Action;
+                        timer = 1f;
+                    }
+                    /*
+                    else
+                    {
+                        TryNonKingFigures();
+                        state = State.NonKingGetOutOfCheck();
+                        timer = 1f;
+                    }*/
                 }
                 break;
             case State.Action:
