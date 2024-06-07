@@ -208,6 +208,49 @@ public class UICanvas : MonoBehaviour
                                 }
                             }
                         }
+                        else if (gridPosition.z + gridPosition.x == kingPos.z + kingPos.x) 
+                        {
+                            if (kingPos.x > threatPos.x && kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x && kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x < threatPos.x && kingPos.z > threatPos.z)
+                            {
+                                if (gridPosition.x < threatPos.x && gridPosition.x > kingPos.x)
+                                {
+                                    if (gridPosition.z > threatPos.z && gridPosition.z < kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            if (kingPos.x > threatPos.x && kingPos.z < threatPos.z)
+                            {
+                                if (gridPosition.x > threatPos.x && gridPosition.x < kingPos.x)
+                                {
+                                    if (gridPosition.z < threatPos.z && gridPosition.z > kingPos.z)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
                         
                     }
                 }
@@ -219,8 +262,6 @@ public class UICanvas : MonoBehaviour
             GridPosition kingPos = PieceManager.Instance.GetLightKing().GetGridPosition();
             if (PieceManager.Instance.GetLightKing().GetPieceAction().GetValidActionGridPositionList().Count > 0)
             {
-                Debug.Log("The king can move");
-                Debug.Log(PieceManager.Instance.GetLightKing().GetPieceAction().GetValidActionGridPositionList().Count);
                 return false;
             }
             else

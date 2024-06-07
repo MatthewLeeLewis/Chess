@@ -132,7 +132,6 @@ public class Piece : MonoBehaviour
                                 if (piece.GetGridPosition() != testGridPosition)
                                 {
                                     Debug.DrawLine(pieceWorldPosition + Vector3.up * heightDisplacement, nwHit.point, Color.white, 5f, true);
-                                    Debug.Log("Pawn blocked movement.");
                                     return true;
                                 }
                             }
@@ -636,7 +635,6 @@ public class Piece : MonoBehaviour
                 }
             }
         }
-        Debug.Log("movement allowed.");
         return false;
     }   
 

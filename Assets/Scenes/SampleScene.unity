@@ -3633,7 +3633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5bc9c66cf242014ba35fcf4243b6f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightIsAI: 1
+  lightIsAI: 0
   darkIsAI: 1
 --- !u!4 &1559274893
 Transform:

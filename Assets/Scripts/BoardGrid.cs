@@ -22,7 +22,7 @@ public class BoardGrid : MonoBehaviour
         Instance = this; // This instantiates the instance.
 
         gridSystem = new GridSystem(8, 8, 2f); // Creates a standard chessboard.
-        //gridSystem.CreateDebugObjects(gridDebugObjectPrefab); // Create the prefab Debug objects into the grid system.
+        gridSystem.CreateDebugObjects(gridDebugObjectPrefab); // Create the prefab Debug objects into the grid system.
     }
 
     public void AddPieceAtGridPosition(GridPosition gridPosition, Piece piece) // Place a piece at a specific grid position
@@ -106,7 +106,6 @@ public class BoardGrid : MonoBehaviour
                             {
                                 if (piece.GetGridPosition() != testGridPosition)
                                 {
-                                    Debug.Log("Pawn blocked movement.");
                                     Debug.DrawLine(pieceWorldPosition + Vector3.up * heightDisplacement, nwHit.point, Color.white, 5f, true);
                                     return true;
                                 }
@@ -611,7 +610,6 @@ public class BoardGrid : MonoBehaviour
                 }
             }
         }
-        Debug.Log("movement allowed.");
         return false;
     }
 
