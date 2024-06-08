@@ -26,22 +26,69 @@ public class UICanvas : MonoBehaviour
     void Start()
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        if (TurnSystem.Instance.EitherIsAI() && TurnSystem.Instance.IsDarkAI())
+        {
+            turnText.text = "Your Turn";
+        }
+        else if (TurnSystem.Instance.EitherIsAI() && !TurnSystem.Instance.IsDarkAI())
+        {
+            turnText.text = "";
+        }
+        else
+        {
+            turnText.text = "Light Turn";
+        }
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
         if (TurnSystem.Instance.IsDarkTurn())
         {
-            turnText.text = "Dark Turn";
+            if (TurnSystem.Instance.EitherIsAI() && !TurnSystem.Instance.IsDarkAI())
+            {
+                turnText.text = "Your Turn";
+            }
+            else if (TurnSystem.Instance.EitherIsAI() && TurnSystem.Instance.IsDarkAI())
+            {
+                turnText.text = "";
+            }
+            else
+            {
+                turnText.text = "Dark Turn";
+            }
         
             GridPosition gridPosition = PieceManager.Instance.GetDarkKing().GetGridPosition();
             if (PieceManager.Instance.GetDarkKing().IsThreatened(gridPosition))
             {
                 isInCheck = true;
                 checkText.enabled = true;
+                if (TurnSystem.Instance.EitherIsAI() && !TurnSystem.Instance.IsDarkAI())
+                {
+                    checkText.text = "You're in Check!";
+                }
+                else if (TurnSystem.Instance.EitherIsAI() && TurnSystem.Instance.IsDarkAI())
+                {
+                    checkText.text = "";
+                }
+                else
+                {
+                    checkText.text = "Dark is in Check!";
+                }
                 if (CheckCheckmate(true))
                 {
-                    checkText.text = "CHECKMATE!";
+                    if (TurnSystem.Instance.EitherIsAI() && !TurnSystem.Instance.IsDarkAI())
+                    {
+                        checkText.text = "CHECKMATE! You Lose...";
+                    }
+                    else if (TurnSystem.Instance.EitherIsAI() && TurnSystem.Instance.IsDarkAI())
+                    {
+                        checkText.text = "CHECKMATE! You Win!!!";
+                    }
+                    else 
+                    {
+                        checkText.text = "CHECKMATE! Light Wins!!!";
+                    }
+                    
                     AI_system.Instance.GiveUp();
                 }
                 Invoke("EnableThreatCollider", 1f);
@@ -55,16 +102,50 @@ public class UICanvas : MonoBehaviour
         }
         else
         {
-            turnText.text = "Light Turn";
+            if (TurnSystem.Instance.EitherIsAI() && TurnSystem.Instance.IsDarkAI())
+            {
+                turnText.text = "Your Turn";
+            }
+            else if (TurnSystem.Instance.EitherIsAI() && !TurnSystem.Instance.IsDarkAI())
+            {
+                turnText.text = "";
+            }
+            else
+            {
+                turnText.text = "Light Turn";
+            }
         
             GridPosition gridPosition = PieceManager.Instance.GetLightKing().GetGridPosition();
             if (PieceManager.Instance.GetLightKing().IsThreatened(gridPosition))
             {
                 isInCheck = true;
                 checkText.enabled = true;
+                if (TurnSystem.Instance.EitherIsAI() && TurnSystem.Instance.IsDarkAI())
+                {
+                    checkText.text = "You're in Check!";
+                }
+                else if (TurnSystem.Instance.EitherIsAI() && !TurnSystem.Instance.IsDarkAI())
+                {
+                    checkText.text = "";
+                }
+                else
+                {
+                    checkText.text = "Light is in Check!";
+                }
                 if (CheckCheckmate(false))
                 {
-                    checkText.text = "CHECKMATE!";
+                    if (TurnSystem.Instance.EitherIsAI() && TurnSystem.Instance.IsDarkAI())
+                    {
+                        checkText.text = "CHECKMATE! You Lose...";
+                    }
+                    else if (TurnSystem.Instance.EitherIsAI() && !TurnSystem.Instance.IsDarkAI())
+                    {
+                        checkText.text = "CHECKMATE! You Win!!!";
+                    }
+                    else 
+                    {
+                        checkText.text = "CHECKMATE! Dark Wins!!!";
+                    }
                     AI_system.Instance.GiveUp();
                 }
                 Invoke("EnableThreatCollider", 1f);

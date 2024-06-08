@@ -53,4 +53,23 @@ public class TurnSystem : MonoBehaviour
             return lightIsAI;
         }
     }
+
+    public bool EitherIsAI()
+    {
+        if (darkIsAI || lightIsAI)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool IsDarkAI()
+    {
+        return darkIsAI;
+    }
+
+    public bool IsLightAI()
+    {
+        return lightIsAI;
+    }
 }

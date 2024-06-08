@@ -22,7 +22,7 @@ public class BoardGrid : MonoBehaviour
         Instance = this; // This instantiates the instance.
 
         gridSystem = new GridSystem(8, 8, 2f); // Creates a standard chessboard.
-        gridSystem.CreateDebugObjects(gridDebugObjectPrefab); // Create the prefab Debug objects into the grid system.
+        //gridSystem.CreateDebugObjects(gridDebugObjectPrefab); // Create the prefab Debug objects into the grid system.
     }
 
     public void AddPieceAtGridPosition(GridPosition gridPosition, Piece piece) // Place a piece at a specific grid position
