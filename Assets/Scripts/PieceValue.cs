@@ -54,35 +54,35 @@ public class PieceValue : MonoBehaviour
                     {
                         case 0:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 1:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 2:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 3:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 4:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 5:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 6:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 7:
                             {
-                                return 0f;
+                                return 50f;
                             }
                     }
                     break;
@@ -327,35 +327,35 @@ public class PieceValue : MonoBehaviour
                     {
                         case 0:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 1:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 2:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 3:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 4:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 5:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 6:
                             {
-                                return 0f;
+                                return 50f;
                             }
                         case 7:
                             {
-                                return 0f;
+                                return 50f;
                             }
                     }
                     break;
