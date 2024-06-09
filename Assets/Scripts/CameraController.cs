@@ -8,6 +8,10 @@ public class CameraController : MonoBehaviour
 {
     private const float MIN_FOLLOW_Y_OFFSET = 2f;
     private const float MAX_FOLLOW_Y_OFFSET = 12f;
+    private const float MIN_X = -13f;
+    private const float MAX_X = 27f;
+    private const float MIN_Z = -20f;
+    private const float MAX_Z = 33f;
 
     [SerializeField] private CinemachineVirtualCamera cinemachineVirtualCamera;
 
@@ -58,6 +62,23 @@ public class CameraController : MonoBehaviour
 
         Vector3 moveVector = transform.forward * inputMoveDir.z + transform.right * inputMoveDir.x;
         transform.position += moveVector * moveSpeed * Time.deltaTime;
+
+        if (transform.position.x < MIN_X)
+        {
+            transform.position = new Vector3(MIN_X, transform.position.y, transform.position.z);
+        }
+        else if (transform.position.x > MAX_X)
+        {
+            transform.position = new Vector3(MAX_X, transform.position.y, transform.position.z);
+        }
+        if (transform.position.z < MIN_Z)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, MIN_Z);
+        }
+        else if (transform.position.z > MAX_Z)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, MAX_Z);
+        }
     }
 
     private void HandleZoom()
