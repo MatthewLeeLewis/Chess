@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1206111854932302589, guid: 4db695d1537019b44802920fe7819519, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a5d54e84a11d914c851f16d426ede9b, type: 2}
     - target: {fileID: 1812778518072447788, guid: 4db695d1537019b44802920fe7819519, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -53,6 +57,10 @@ PrefabInstance:
       value: Bishop_Dark
       objectReference: {fileID: 0}
     - target: {fileID: 5114010108458729998, guid: 4db695d1537019b44802920fe7819519, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a5d54e84a11d914c851f16d426ede9b, type: 2}
+    - target: {fileID: 5355137473450187676, guid: 4db695d1537019b44802920fe7819519, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 8a5d54e84a11d914c851f16d426ede9b, type: 2}
