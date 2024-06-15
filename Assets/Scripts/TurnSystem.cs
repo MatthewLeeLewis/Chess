@@ -10,8 +10,8 @@ public class TurnSystem : MonoBehaviour
 
     private int turnNumber = 1;
     private bool isDarkTurn = false;
-    [SerializeField] private bool lightIsAI = false;
-    [SerializeField] private bool darkIsAI = false;
+    private bool lightIsAI = false;
+    private bool darkIsAI = false;
     
     private void Awake() 
     {
@@ -22,6 +22,18 @@ public class TurnSystem : MonoBehaviour
             return;
         }
         Instance = this; // This instantiates the instance.
+
+        if (!GameSettingManager.Instance.IsPvP())
+        {
+            if (GameSettingManager.Instance.PlayerIsDark())
+            {
+                lightIsAI = true;
+            }
+            else
+            {
+                darkIsAI = true;
+            }
+        }
     }
 
     public void NextTurn()

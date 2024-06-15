@@ -820,7 +820,7 @@ public class BoardGrid : MonoBehaviour
         float targetValue = selectedPiece.GetComponent<PieceValue>().GetPower(targetPosCoord);
         if (IsThreatened(targetPosition, TurnSystem.Instance.IsDarkTurn()))
         {
-            targetValue -= selectedPiece.GetRelativePower();
+            targetValue -= selectedPiece.GetRelativePower() * 2f;
         }
 
         float vulnerabilityValue = 0f;
@@ -855,10 +855,20 @@ public class BoardGrid : MonoBehaviour
                     Piece testPiece = GetPieceAtGridPosition(gridPosition);
                     if (testPiece.IsDark() != selectedPiece.IsDark())
                     {
-                        threatValue += (testPiece.GetRelativePower() / 10);
+                        threatValue += (testPiece.GetRelativePower() / 10f);
+                        threatValue -= (testPiece.GetPieceAction().GetValidActionGridPositionList().Count);
+                        if (testPiece.IsThreatened(testPiece.GetGridPosition()))
+                        {
+                            threatValue += (testPiece.GetRelativePower() / 10f);
+                        }
                     }
                 }
             }
+        }
+
+        if (threatValue < 0f)
+        {
+            threatValue = 0f;
         }
 
         return (threatValue + targetPieceValue + targetValue - currentValue - vulnerabilityValue - discouragementValue); 
