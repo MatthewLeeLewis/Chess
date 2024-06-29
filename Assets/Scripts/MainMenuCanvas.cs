@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
+// This script controls the main menu of the game.
 public class MainMenuCanvas : MonoBehaviour
 {
     [SerializeField] Button playBtn;

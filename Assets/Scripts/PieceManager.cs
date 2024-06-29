@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * This script manages all the active pieces on the board into lists, keeping them organized.
+ */
+
 public class PieceManager : MonoBehaviour
 {
     public static PieceManager Instance { get; private set; }
@@ -74,7 +78,7 @@ public class PieceManager : MonoBehaviour
             capturedLightList.Add(piece);
             Debug.Log("There are " + capturedLightList.Count + " captured light pieces.");
         }
-        //Destroy(piece.gameObject);
+        
         piece.gameObject.SetActive(false);
     }
 

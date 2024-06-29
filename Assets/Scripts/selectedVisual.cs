@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class selectedVisual : MonoBehaviour
 {
+    // This script controls the glowing selected visual attached to each piece to show when it is selected.
     [SerializeField] private Piece piece;
     private MeshRenderer meshRenderer;
     

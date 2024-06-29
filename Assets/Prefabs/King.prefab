@@ -52,7 +52,7 @@ MonoBehaviour:
   piecesLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  relativePower: 900
+  relativePower: 20
   isDark: 0
   testBox: {fileID: 1812778518072447788, guid: 754f6698af034e24e9c7827aec1b21e4, type: 3}
   boxCollider: {fileID: 4521801339430913038}

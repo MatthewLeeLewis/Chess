@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TurnSystem : MonoBehaviour
 {
+    // This script controls the turn system of the game.
     public static TurnSystem Instance { get; private set; }
     public event EventHandler OnTurnChanged;
 

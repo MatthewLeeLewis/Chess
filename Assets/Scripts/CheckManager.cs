@@ -3,25 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
-public class UICanvas : MonoBehaviour
+// This script controls the user interface of the game itself as well as handling check/checkmate detection and functionality.
+
+public class CheckManager : MonoBehaviour
 {
-    public static UICanvas Instance { get; private set; } // This ensures that the instance of this object can be gotten publicly but cannot be set publicly.
+    public static CheckManager Instance { get; private set; } // This ensures that the instance of this object can be gotten publicly but cannot be set publicly.
     [SerializeField] private TextMeshProUGUI turnText;
     [SerializeField] private TextMeshProUGUI checkText;
     private bool isInCheck = false;
+    [SerializeField] private Button backToMenuBtn;
+
+    
 
     private void Awake()
     {
         if (Instance != null) // This if check ensures that multiple instances of this object do not exist and reports it if they do, and destroys the duplicate.
         {
-            Debug.LogError("There's more than one UICanvas! " + transform + " - " + Instance);
+            Debug.LogError("There's more than one CheckManager! " + transform + " - " + Instance);
             Destroy(gameObject);
             return;
         }
         Instance = this; // This instantiates the instance.
         checkText.enabled = false;
+
+        backToMenuBtn.onClick.AddListener(() =>
+        {
+            SceneManager.LoadSceneAsync("MainMenu");
+        });
     }
     void Start()
     {
@@ -158,6 +169,7 @@ public class UICanvas : MonoBehaviour
         }
     }
 
+    // The following function checks the entire team's moves to verify checkmate.
     private bool CheckCheckmate(bool isDarkCheck)
     {
         if (isDarkCheck)
@@ -238,11 +250,6 @@ public class UICanvas : MonoBehaviour
                 {
                     foreach (GridPosition gridPosition in (PieceManager.Instance.GetDarkPieceList()[i].GetPieceAction().GetValidActionGridPositionList()))
                     {
-                        /*
-                        Vector2 testPosVector = new Vector2(gridPosition.x, gridPosition.z);
-                        Vector2 kingPosVector = new Vector2(kingPos.x, kingPos.z);
-                        Vector2 threatPosVector = new Vector2(threatPos.x, threatPos.z);*/
-
                         if (gridPosition.z - gridPosition.x == kingPos.z - kingPos.x)
                         {
                             if (kingPos.x > threatPos.x && kingPos.z > threatPos.z)
@@ -415,10 +422,6 @@ public class UICanvas : MonoBehaviour
                 {
                     foreach (GridPosition gridPosition in (PieceManager.Instance.GetLightPieceList()[i].GetPieceAction().GetValidActionGridPositionList()))
                     {
-                        //Vector2 testPosVector = new Vector2(gridPosition.x, gridPosition.z);
-                        //Vector2 kingPosVector = new Vector2(kingPos.x, kingPos.z);
-                        //Vector2 threatPosVector = new Vector2(threatPos.x, threatPos.z);
-
                         if (gridPosition.z - gridPosition.x == kingPos.z - kingPos.x)
                         {
                             if (kingPos.x > threatPos.x && kingPos.z > threatPos.z)

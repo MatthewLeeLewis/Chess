@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameSettingManager : MonoBehaviour
 {
+    // This script is to control the settings made in the main menu so they may be applied to the game session.
     public static GameSettingManager Instance { get; private set; }
     private bool isPvP = false;
     private bool playerIsDark = false;

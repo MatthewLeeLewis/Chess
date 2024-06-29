@@ -11,8 +11,8 @@ using UnityEngine.EventSystems;
 public class PieceControlSystem : MonoBehaviour
 {
     public static PieceControlSystem Instance { get; private set; } // This ensures that the instance of this object can be gotten publicly but cannot be set publicly.
+
     public event EventHandler OnSelectedPieceChanged; // This is an event that allows subscribers to react to a selected piece being changed.
-    //public event EventHandler<bool> OnBusyChanged;
     public event EventHandler OnBusyChanged;  
     public event EventHandler OnActionStarted;
     public static event EventHandler TestBoxDestroy;
@@ -60,19 +60,6 @@ public class PieceControlSystem : MonoBehaviour
             return;
         }
 
-        /*
-        if (!TurnSystem.Instance.IsPlayerTurn())
-        {
-            return;
-        }
-        */
-
-        /*
-        if (EventSystem.current.IsPointerOverGameObject()) // Ensures the mouse cursor is not over a button...
-        {
-            return;
-        }
-        */
         if (TryCastling())
         {
             return;
@@ -103,7 +90,6 @@ public class PieceControlSystem : MonoBehaviour
                     
                     if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
                     {
-                        //Transform testBox = selectedPiece.GetBox();
                         Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
                         
                         if (!PieceManager.Instance.GetDarkKing().IsThreatened(mouseGridPosition))
@@ -119,8 +105,6 @@ public class PieceControlSystem : MonoBehaviour
                 {
                     if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
                     {
-                        //Transform testBox = selectedPiece.GetBox();
-                        // Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
                         Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
                         if (!PieceManager.Instance.GetLightKing().IsThreatened(mouseGridPosition))
                         {
@@ -131,7 +115,6 @@ public class PieceControlSystem : MonoBehaviour
                     }
                 }
                 Invoke("TestBoxDestruction", 1f);
-                //TestBoxDestroy?.Invoke(this, EventArgs.Empty);
             }
             else if (selectedPieceAction.IsValidActionGridPosition(mouseGridPosition))
             {
@@ -142,7 +125,6 @@ public class PieceControlSystem : MonoBehaviour
                     OnActionStarted?.Invoke(this, EventArgs.Empty);
                 }
                 Invoke("TestBoxDestruction", 1f);
-                //TestBoxDestroy?.Invoke(this, EventArgs.Empty);
             }
         }
     }
@@ -155,7 +137,6 @@ public class PieceControlSystem : MonoBehaviour
     private void SetBusy()
     {
         isBusy = true;
-        //OnBusyChanged?.Invoke(this, isBusy);
         OnBusyChanged?.Invoke(this, EventArgs.Empty);
     }
 

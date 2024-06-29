@@ -6,7 +6,6 @@ using UnityEngine;
 public class KnightAction : PieceAction // By making the base class abstract, instances of this class cannot be created, only subclasses.
 {
     public event EventHandler OnStopMoving;
-    public static event EventHandler TestBoxDestroy;
     [SerializeField] private LayerMask piecesLayerMask;
 
     private void Update()
@@ -73,29 +72,10 @@ public class KnightAction : PieceAction // By making the base class abstract, in
                 }
 
                 Vector3 gridWorldPosition = BoardGrid.Instance.GetWorldPosition(testGridPosition);
-
-                /*
-                Piece king;
-                if (piece.IsDark())
-                {
-                    king = PieceManager.Instance.GetDarkKing();
-                }
-                else
-                {
-                    king = PieceManager.Instance.GetLightKing();
-                }
-
-                //PieceControlSystem.Instance.MoveBox(gridWorldPosition);
-                
-                if (king.IsThreatened(testGridPosition))
-                {
-                    continue;
-                }*/
                 
                 validGridPositionList.Add(testGridPosition);
             }
         }
-        TestBoxDestroy?.Invoke(this, EventArgs.Empty);
         return validGridPositionList;
     }
 
@@ -143,34 +123,10 @@ public class KnightAction : PieceAction // By making the base class abstract, in
                 }
 
                 Vector3 gridWorldPosition = BoardGrid.Instance.GetWorldPosition(testGridPosition);
-
-                /*
-                Piece king;
-                if (piece.IsDark())
-                {
-                    king = PieceManager.Instance.GetDarkKing();
-                }
-                else
-                {
-                    king = PieceManager.Instance.GetLightKing();
-                }
-
-                //PieceControlSystem.Instance.MoveBox(gridWorldPosition);
-                
-                if (king.IsThreatened(testGridPosition))
-                {
-                    continue;
-                }*/
                 
                 validGridPositionList.Add(testGridPosition);
             }
         }
-        TestBoxDestroy?.Invoke(this, EventArgs.Empty);
         return validGridPositionList;
-    }
-
-    public override bool IsValidKingPosition(GridPosition gridPosition)
-    {
-        return (!GetValidActionGridPositionList().Contains(gridPosition));
     }
 }

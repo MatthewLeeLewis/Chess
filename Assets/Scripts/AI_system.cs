@@ -7,16 +7,27 @@ using UnityEngine;
 
 public class AI_system : MonoBehaviour
 {
-    public static AI_system Instance { get; private set; } // This ensures that the instance of this object can be gotten publicly but cannot be set publicly.
+    // Create static instance
+    public static AI_system Instance { get; private set; } 
+
+    // Event to destroy Text Boxes for ray detection of hypothetical moves.
     public static event EventHandler TestBoxDestroy;
+
+    // Prefabs for Pawn Promotion
     [SerializeField] private Transform darkQueenPrefab;
     [SerializeField] private Transform queenPrefab;
+
+    // Prefab for the aforementioned testBox.
     [SerializeField] private TestBox testBox;
 
+    // List of float values for gauging the best move to make
     List<float> positionValues;
+
+    // Reference to which actions and grid positions are connected to the best values.
     Dictionary<float, Piece> actionsByValues;
     Dictionary<float, GridPosition> positionsByValues;
 
+    // enumerator for the various states of the AI.
     private enum State
     {
         WaitingForAITurn,
@@ -27,8 +38,13 @@ public class AI_system : MonoBehaviour
         GiveUp
     }
 
+    // The state itself.
     private State state;
+
+    // A timer to create timed delays
     private float timer;
+
+    // The selected piece, its action, and target position
     Piece selectedPiece;
     PieceAction selectedPieceAction;
     GridPosition targetPosition;
@@ -42,8 +58,9 @@ public class AI_system : MonoBehaviour
             return;
         }
         Instance = this; // This instantiates the instance.
-        state = State.WaitingForAITurn;
+        state = State.WaitingForAITurn; // Sets the default state
 
+        // Instantiate lists
         positionValues = new List<float>(); 
         actionsByValues = new Dictionary<float, Piece>();
         positionsByValues = new Dictionary<float, GridPosition>();
@@ -51,6 +68,7 @@ public class AI_system : MonoBehaviour
 
     private void Start() 
     {
+        // Subscribe to turn changing event and determine if the AI takes the first turn.
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         if (TurnSystem.Instance.IsAITurn())
         {
@@ -64,11 +82,13 @@ public class AI_system : MonoBehaviour
 
     private void Update()
     {
+        // Do nothing if not an Ai turn...
         if (!TurnSystem.Instance.IsAITurn())
         {
             return;
         }
 
+        // Run the state machine
         switch (state)
         {
             case State.WaitingForAITurn:
@@ -77,9 +97,18 @@ public class AI_system : MonoBehaviour
                 timer -= Time.deltaTime;
                 if (timer <= 0f)
                 {
-                    if (!UICanvas.Instance.IsInCheck())
+                    if (!CheckManager.Instance.IsInCheck())
                     {
-                        CalculateAIAction();
+                        List<Piece> pieceList;
+                        if (TurnSystem.Instance.IsDarkTurn())
+                        {
+                            pieceList = PieceManager.Instance.GetDarkPieceList().OrderBy(x => UnityEngine.Random.value).ToList();
+                        }
+                        else
+                        {
+                            pieceList = PieceManager.Instance.GetLightPieceList().OrderBy(x => UnityEngine.Random.value).ToList();
+                        }
+                        CalculateAIAction(pieceList);
                         state = State.Action;
                         timer = 1f;
                     }
@@ -187,29 +216,17 @@ public class AI_system : MonoBehaviour
         }
     }
 
-    private void CalculateAIAction()
+    private void CalculateAIAction(List<Piece> pieceList)
     {
-        List<Piece> pieceList;
+        // Instantiate a new list for valid positions
         List<GridPosition> validPositions; 
 
+        // Reset lists.
         positionValues.Clear();
         actionsByValues.Clear();
         positionsByValues.Clear();
 
-        if (TurnSystem.Instance.IsDarkTurn())
-        {
-            pieceList = PieceManager.Instance.GetDarkPieceList().OrderBy(x => UnityEngine.Random.value).ToList();
-        }
-        else
-        {
-            pieceList = PieceManager.Instance.GetLightPieceList().OrderBy(x => UnityEngine.Random.value).ToList();
-        }
-        
-        /*
-        selectedPiece = pieceList[UnityEngine.Random.Range(0, pieceList.Count - 1)];
-        selectedPieceAction = selectedPiece.GetPieceAction();
-        PieceControlSystem.Instance.SetSelectedPiece(selectedPiece);
-        */
+        // Iterate over every piece of the AI team and calculate the values of its moves.
         for (int i = 0; i < pieceList.Count; i++)
         {
             selectedPiece = pieceList[i];
@@ -231,35 +248,18 @@ public class AI_system : MonoBehaviour
                 }
             }
         }
-
-        /*
-        if (validPositions.Count > 0)
-        {
-            targetPosition = validPositions[UnityEngine.Random.Range(0, validPositions.Count - 1)];
-        }
-        else
-        {
-            CalculateAIAction();
-        }*/
-        
-
-        //selectedPiece.GetPieceAction().TakeAction(targetPosition, ClearBusy);
     }
 
     private bool TryInitiateAction()
     {
-        //selectedPiece.GetPieceAction().TakeAction(targetPosition, ClearBusy);
-        Debug.Log("The selected piece is " + selectedPiece.GetPieceType());
-        Debug.Log("It is moving to " + targetPosition.ToString());
-
+        // This method tries to initiate what it has selected as the best action and verifies that the move is legal, returning true if it is and executing the action.
+        // Otherwise, it returns false.
         if (selectedPiece.GetPieceType() != "King")
         {
             if (selectedPiece.IsDark())
-            {
-                    
+            {    
                 if (selectedPieceAction.IsValidActionGridPosition(targetPosition))
                 {
-                    //Transform testBox = selectedPiece.GetBox();
                     Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(targetPosition), Quaternion.identity);
                         
                     if (!PieceManager.Instance.GetDarkKing().IsThreatened(targetPosition))
@@ -273,8 +273,6 @@ public class AI_system : MonoBehaviour
             {
                 if (selectedPieceAction.IsValidActionGridPosition(targetPosition))
                 {
-                    //Transform testBox = selectedPiece.GetBox();
-                    // Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(mouseGridPosition), Quaternion.identity);
                     Instantiate(testBox, BoardGrid.Instance.GetWorldPosition(targetPosition), Quaternion.identity);
                     if (!PieceManager.Instance.GetLightKing().IsThreatened(targetPosition))
                     {
@@ -284,7 +282,6 @@ public class AI_system : MonoBehaviour
                 }
             }
             Invoke("TestBoxDestruction", 1f);
-            //TestBoxDestroy?.Invoke(this, EventArgs.Empty);
         }
         else if (selectedPieceAction.IsValidActionGridPosition(targetPosition))
         {
@@ -294,13 +291,13 @@ public class AI_system : MonoBehaviour
                 return true;
             }
             Invoke("TestBoxDestruction", 1f);
-            //TestBoxDestroy?.Invoke(this, EventArgs.Empty);
         }
         return false;
     }
 
     private void ClearBusy()
     {
+        // This method emulates ClearBusy from the Piece Control System with some tweaks for AI.
         GridPosition gridPosition = selectedPiece.GetGridPosition();
         List<Piece> pieceList = BoardGrid.Instance.GetPieceListAtGridPosition(gridPosition);
 
@@ -356,12 +353,13 @@ public class AI_system : MonoBehaviour
 
     private void NextTurn()
     {
-
+        // This method simply lets the turn system know to end the turn.
         TurnSystem.Instance.NextTurn();
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
+        // This method allows the AI to react correctly to the changing of turns.
         if (TurnSystem.Instance.IsAITurn())
         {
             state = State.TakingTurn;
@@ -371,16 +369,19 @@ public class AI_system : MonoBehaviour
 
     public void TestBoxDestruction()
     {
+        // This method was made simply for the purpose of being able to delay the event.
         TestBoxDestroy?.Invoke(this, EventArgs.Empty);
     }
 
     public void GiveUp()
     {
+        // This method is called when checkmate is reached so the AI knows to stop.
         state = State.GiveUp;
     }
 
     private void SetSelection()
     {
+        // This method correctly identifies the selected piece and sets the correct variables.
         selectedPiece = actionsByValues[positionValues[0]];
         selectedPieceAction = selectedPiece.GetPieceAction();
         PieceControlSystem.Instance.SetSelectedPiece(selectedPiece);
@@ -389,6 +390,7 @@ public class AI_system : MonoBehaviour
 
     private void TryNonKingFigures()
     {
+        // This method is to check if any non-king figures can move to end a state of check
         Piece threatPiece = PieceControlSystem.Instance.GetLastMoved();
         GridPosition threatPos = threatPiece.GetGridPosition();
         GridPosition kingPos;
@@ -629,6 +631,7 @@ public class AI_system : MonoBehaviour
 
     private void CalculateKingMove()
     {
+        // This method is to help the king determine its best move when necessary.
         GridPosition threatPos = PieceControlSystem.Instance.GetLastMoved().GetGridPosition();
         Piece kingPiece;
         List<GridPosition> validPositions; 

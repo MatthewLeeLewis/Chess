@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PieceValue : MonoBehaviour
 {
+
+    // This script helps to keep track of the value of each piece based on its position on the grid, for AI purposes.
+    // Most of the values themselves came from https://www.freecodecamp.org/news/simple-chess-ai-step-by-step-1d55a9266977/
     private Piece piece;
 
     private void Awake()

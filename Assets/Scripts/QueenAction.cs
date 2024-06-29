@@ -78,23 +78,6 @@ public class QueenAction : PieceAction // By making the base class abstract, ins
                     // Blocked by another piece.
                     continue;
                 }
-/*
-                Piece king;
-                if (piece.IsDark())
-                {
-                    king = PieceManager.Instance.GetDarkKing();
-                }
-                else
-                {
-                    king = PieceManager.Instance.GetLightKing();
-                }
-
-                //PieceControlSystem.Instance.MoveBox(gridWorldPosition);
-                
-                if (king.IsThreatened(testGridPosition))
-                {
-                    continue;
-                }*/
 
                 validGridPositionList.Add(testGridPosition);
             }
@@ -153,33 +136,11 @@ public class QueenAction : PieceAction // By making the base class abstract, ins
                     // Blocked by another piece.
                     continue;
                 }
-/*
-                Piece king;
-                if (piece.IsDark())
-                {
-                    king = PieceManager.Instance.GetDarkKing();
-                }
-                else
-                {
-                    king = PieceManager.Instance.GetLightKing();
-                }
-
-                //PieceControlSystem.Instance.MoveBox(gridWorldPosition);
-                
-                if (king.IsThreatened(testGridPosition))
-                {
-                    continue;
-                }*/
 
                 validGridPositionList.Add(testGridPosition);
             }
         }
         
         return validGridPositionList;
-    }
-
-    public override bool IsValidKingPosition(GridPosition gridPosition)
-    {
-        return (!GetValidActionGridPositionList().Contains(gridPosition));
     }
 }

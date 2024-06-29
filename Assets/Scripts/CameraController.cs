@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
+// This script is attached tot he object the cinemachine camera follows, to control its movement.
+
 public class CameraController : MonoBehaviour
 {
     private const float MIN_FOLLOW_Y_OFFSET = 2f;

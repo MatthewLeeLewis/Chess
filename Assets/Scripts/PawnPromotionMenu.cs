@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PawnPromotionMenu : MonoBehaviour
 {
+    // This script controls the menu for pawn promotion and handles the promotion itself.
 
     public static PawnPromotionMenu Instance { get; private set; }
     [SerializeField] private Button queenButton;

@@ -68,83 +68,15 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                     }
                 }
                 
-                //bool valid = true;
                 List<Piece> enemyPieceList;
                 if (piece.IsDark())
                 {
                     enemyPieceList = PieceManager.Instance.GetLightPieceList();
-                    /*
-                    foreach (Piece enemy in PieceManager.Instance.GetLightPieceList())
-                    {
-                        foreach (GridPosition pos in enemy.GetPieceAction().GetValidActionGridPositionList())
-                        {
-                            if (pos.x == testGridPosition.x && pos.z == testGridPosition.z)
-                            {
-                                valid = false;
-                                continue;
-                            }
-                        }
-                    }*/
                 }
                 else
                 {
                     enemyPieceList = PieceManager.Instance.GetDarkPieceList();
-                    /*
-                    foreach (Piece enemy in PieceManager.Instance.GetDarkPieceList())
-                    {
-                        foreach (GridPosition pos in enemy.GetPieceAction().GetValidActionGridPositionList())
-                        {
-                            if (pos.x == testGridPosition.x && pos.z == testGridPosition.z)
-                            {
-                                valid = false;
-                                continue;
-                            }
-                        }
-                    }*/
                 }
-                
-                
-                /*
-                foreach (Piece enemy in enemyPieceList)
-                {
-                    
-                    if (!enemy.GetPieceAction().IsValidKingPosition(testGridPosition))
-                    {
-                        valid = false;
-                        continue;
-                    }
-                }
-                
-                if (!valid)
-                {
-                    continue;
-                }*/
-
-                //************************************
-
-                /*
-                float heightDisplacement = 0.6f;
-                GridPosition eastPosOffset = new GridPosition(1, 0);
-                GridPosition eastPos_grid = gridPosition + eastPosOffset;
-                Vector3 eastPos = BoardGrid.Instance.GetWorldPosition(eastPos_grid);
-                
-                Vector3 east = (eastPos - pieceWorldPosition).normalized;
-                if (Physics.Raycast(
-                        pieceWorldPosition + Vector3.up * heightDisplacement,
-                        east,
-                        out RaycastHit eastHit,
-                        32f,
-                        piecesLayerMask))
-                {
-                    if (eastHit.transform.TryGetComponent<Piece>(out Piece hitPiece)))
-                    {
-                        if (hitPiece.GetPieceType() != "Rook" || hitPiece.IsDark() != pieceGridPosition.isDark())
-                        {
-                            continue;
-                        }
-                    }
-                }*/
-                
                 
                 if (BoardGrid.Instance.IsThreatened(testGridPosition, piece.IsDark()))
                 {
@@ -185,83 +117,15 @@ public class KingAction : PieceAction // By making the base class abstract, inst
                     }
                 }
                 
-                //bool valid = true;
                 List<Piece> enemyPieceList;
                 if (piece.IsDark())
                 {
                     enemyPieceList = PieceManager.Instance.GetLightPieceList();
-                    /*
-                    foreach (Piece enemy in PieceManager.Instance.GetLightPieceList())
-                    {
-                        foreach (GridPosition pos in enemy.GetPieceAction().GetValidActionGridPositionList())
-                        {
-                            if (pos.x == testGridPosition.x && pos.z == testGridPosition.z)
-                            {
-                                valid = false;
-                                continue;
-                            }
-                        }
-                    }*/
                 }
                 else
                 {
                     enemyPieceList = PieceManager.Instance.GetDarkPieceList();
-                    /*
-                    foreach (Piece enemy in PieceManager.Instance.GetDarkPieceList())
-                    {
-                        foreach (GridPosition pos in enemy.GetPieceAction().GetValidActionGridPositionList())
-                        {
-                            if (pos.x == testGridPosition.x && pos.z == testGridPosition.z)
-                            {
-                                valid = false;
-                                continue;
-                            }
-                        }
-                    }*/
                 }
-                
-                
-                /*
-                foreach (Piece enemy in enemyPieceList)
-                {
-                    
-                    if (!enemy.GetPieceAction().IsValidKingPosition(testGridPosition))
-                    {
-                        valid = false;
-                        continue;
-                    }
-                }
-                
-                if (!valid)
-                {
-                    continue;
-                }*/
-
-                //************************************
-
-                /*
-                float heightDisplacement = 0.6f;
-                GridPosition eastPosOffset = new GridPosition(1, 0);
-                GridPosition eastPos_grid = gridPosition + eastPosOffset;
-                Vector3 eastPos = BoardGrid.Instance.GetWorldPosition(eastPos_grid);
-                
-                Vector3 east = (eastPos - pieceWorldPosition).normalized;
-                if (Physics.Raycast(
-                        pieceWorldPosition + Vector3.up * heightDisplacement,
-                        east,
-                        out RaycastHit eastHit,
-                        32f,
-                        piecesLayerMask))
-                {
-                    if (eastHit.transform.TryGetComponent<Piece>(out Piece hitPiece)))
-                    {
-                        if (hitPiece.GetPieceType() != "Rook" || hitPiece.IsDark() != pieceGridPosition.isDark())
-                        {
-                            continue;
-                        }
-                    }
-                }*/
-                
                 
                 if (BoardGrid.Instance.IsThreatened(testGridPosition, piece.IsDark()))
                 {
@@ -275,11 +139,7 @@ public class KingAction : PieceAction // By making the base class abstract, inst
         return validGridPositionList;
     }
 
-    public override bool IsValidKingPosition(GridPosition gridPosition)
-    {
-        return (!GetValidActionGridPositionList().Contains(gridPosition));
-    }
-
+    // The following methods track if it has moved or not, to verify if it can potentially castle.
     private void PieceAction_OnStartMoving(object sender, EventArgs e)
     {
         hasMoved = true;

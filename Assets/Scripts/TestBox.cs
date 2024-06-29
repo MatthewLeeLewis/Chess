@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TestBox : MonoBehaviour
 {
+    // The test box script is made explicitly for collision detection for rays in the case of hypothetical moves for selected pieces.
     private void Start()
     {
         PieceControlSystem.TestBoxDestroy += TestBoxDestroy;

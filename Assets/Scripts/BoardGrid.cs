@@ -8,6 +8,8 @@ public class BoardGrid : MonoBehaviour
 
     [SerializeField] private Transform gridDebugObjectPrefab; // Initialize Serialized Field for Debug Prefab.
     private GridSystem gridSystem; // Initialize a grid system object to work with.
+
+    // Reference to the pieces layer.
     [SerializeField] private LayerMask piecesLayerMask;
 
 
@@ -22,7 +24,8 @@ public class BoardGrid : MonoBehaviour
         Instance = this; // This instantiates the instance.
 
         gridSystem = new GridSystem(8, 8, 2f); // Creates a standard chessboard.
-        //gridSystem.CreateDebugObjects(gridDebugObjectPrefab); // Create the prefab Debug objects into the grid system.
+
+        //gridSystem.CreateDebugObjects(gridDebugObjectPrefab); // Uncomment this to create the prefab Debug objects into the grid system, to track gridposition variables.
     }
 
     public void AddPieceAtGridPosition(GridPosition gridPosition, Piece piece) // Place a piece at a specific grid position
@@ -61,21 +64,25 @@ public class BoardGrid : MonoBehaviour
     // Returns whether the position is valid.
     public bool IsValidGridPosition(GridPosition gridPosition) => gridSystem.IsValidGridPosition(gridPosition);
 
+    // Returns the width and height of the grid.
     public int GetWidth() => gridSystem.GetWidth();
     public int GetHeight() => gridSystem.GetHeight();
 
+    // This method returns whether a piece is on a specified position
     public bool HasAnyPieceOnGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         return gridObject.HasAnyPiece();
     }
 
+    // This method returns the specific piece from a grid position
     public Piece GetPieceAtGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         return gridObject.GetPiece();
     }
 
+    // This method is helpful for determining if a particular position is threatened by the opposing team.
     public bool IsThreatened(GridPosition testGridPosition, bool isDark)
     {
         Vector3 pieceWorldPosition = GetWorldPosition(testGridPosition);
@@ -614,13 +621,14 @@ public class BoardGrid : MonoBehaviour
         return false;
     }
 
+    // This method is for AI. It helps to calculate the value of a position for a piece.
     public float GetPositionValue(GridPosition targetPosition)
     {
         Piece targetPiece;
         Piece selectedPiece = PieceControlSystem.Instance.GetSelectedPiece();
 
         float discouragementValue = 0f;
-        if (selectedPiece.GetPieceType() == "King" && !UICanvas.Instance.IsInCheck())
+        if (selectedPiece.GetPieceType() == "King" && !CheckManager.Instance.IsInCheck())
         {
             discouragementValue = 900f;
         }
@@ -841,12 +849,14 @@ public class BoardGrid : MonoBehaviour
             }
         }
 
+
+        List<GridPosition> newActionGridPositionList;
+        newActionGridPositionList = selectedPiece.GetPieceAction().GetTheoreticalActionGridPositionList(targetPosition);
+
         float threatValue = 0f;
         if (selectedPiece.GetPieceType() != "King" && !IsThreatened(targetPosition, TurnSystem.Instance.IsDarkTurn()))
         {
-            List<GridPosition> newActionGridPositionList;
             
-            newActionGridPositionList = selectedPiece.GetPieceAction().GetTheoreticalActionGridPositionList(targetPosition);
             
             foreach (GridPosition gridPosition in newActionGridPositionList)
             {
@@ -857,9 +867,12 @@ public class BoardGrid : MonoBehaviour
                     {
                         threatValue += (testPiece.GetRelativePower() / 10f);
                         threatValue -= (testPiece.GetPieceAction().GetValidActionGridPositionList().Count);
-                        if (testPiece.IsThreatened(testPiece.GetGridPosition()))
+                        if (testPiece.GetPieceType() == "King")
                         {
-                            threatValue += (testPiece.GetRelativePower() / 10f);
+                            if (testPiece.GetPieceAction().GetValidActionGridPositionList().Count <= 1)
+                            {
+                                threatValue += 900f;
+                            }
                         }
                     }
                 }
@@ -871,7 +884,35 @@ public class BoardGrid : MonoBehaviour
             threatValue = 0f;
         }
 
-        return (threatValue + targetPieceValue + targetValue - currentValue - vulnerabilityValue - discouragementValue); 
+        Piece enemyKing;
+        if (TurnSystem.Instance.IsDarkTurn())
+        {
+            enemyKing = PieceManager.Instance.GetLightKing();
+        }
+        else
+        {
+            enemyKing = PieceManager.Instance.GetDarkKing();
+        }
+        float kingThreatValue = 0f;
+        foreach (GridPosition position in enemyKing.GetPieceAction().GetValidActionGridPositionList())
+        {
+            if (newActionGridPositionList.Contains(position))
+            {
+                kingThreatValue += 40f;
+            }
+        }
+
+        float currentKingThreatValue = 0f;
+        foreach (GridPosition position in enemyKing.GetPieceAction().GetValidActionGridPositionList())
+        {
+            if (selectedPiece.GetPieceAction().GetValidActionGridPositionList().Contains(position))
+            {
+                currentKingThreatValue += 40f;
+            }
+        }
+
+
+        return (kingThreatValue + threatValue + targetPieceValue + targetValue - currentValue - vulnerabilityValue - discouragementValue - currentKingThreatValue); 
     }
         
 }
